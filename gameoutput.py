@@ -2,6 +2,7 @@ from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
 from math import *
+import Color
 x=0.0
 y=0.0
 angle=0.0
@@ -26,24 +27,29 @@ def draw(ws_states,ad_states):
      glClearDepth(1)
      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
      glEnable(GL_DEPTH_TEST)
+     glEnable(GL_COLOR_MATERIAL)
 
      camera(ws_states, ad_states)
+
+     #drawxyz()
+     #drawearth()
      light()
 
-     drawxyz()
      drawplayer()
-     #drawearth()
-        
+     glPushMatrix()
+     Color.red()
+     glTranslatef(10,0.7,10)
+     glutSolidTeapot(1)
+     glPopMatrix()
+     glDisable(GL_COLOR_MATERIAL)
      glDisable(GL_DEPTH_TEST)
      glutSwapBuffers()
     
 def drawxyz():
-     white = [1,1,1,1]
+     
      glPushMatrix()
      glBegin(GL_LINES)
-     glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT, white)
-     glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE, white)
-     glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR, white)
+     glColor(0,0,0,1)
      glVertex3f(0,0,0)
      glVertex3f(100,0,0)
      glVertex3f(0,0,0)
@@ -54,15 +60,13 @@ def drawxyz():
      glPopMatrix()
 
 def drawearth():
-     red = [1,0,0,1]
-     green = [0,1,0,1]
-     glPushMatrix()
+     red = (1,0,0,1)
+     green = (0,1,0,1)
+     glPushMatrix()    
      glBegin(GL_QUADS)
-     for i in range(100):
-          for j in range(100):
-               glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT, red)
-               glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE, red)
-               glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR, red)
+     for i in range(10):
+          for j in range(10):
+               glColor4fv(red)
                glVertex3f(i,0,j)
                glVertex3f(i+0.5,0,j)
                glVertex3f(i+0.5,0,j+0.5)
@@ -71,9 +75,7 @@ def drawearth():
                glVertex3f(i-0.5,0,j)
                glVertex3f(i-0.5,0,j-0.5)
                glVertex3f(i,0,j-0.5)
-               glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT,green)
-               glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE,green)
-               glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,green)
+               glColor4fv(green)
                glVertex3f(i,0,j)
                glVertex3f(i+0.5,0,j)
                glVertex3f(i+0.5,0,j-0.5)
@@ -116,19 +118,10 @@ def drawplayer():
 
      glTranslatef(x,0.7,y)
      glRotatef(angle,0,1,0)
-     golden_pot()
+     Color.gold()
+     glutSolidTeapot(1)
  
      glPopMatrix()
 
-def golden_pot():
-     gold_amb = [0.247250, 0.1995, 0.07450, 1.0]
-     gold_diff = [0.75164, 0.60648, 0.22648, 1.0]
-     gold_spe = [0.628281, 0.555802, 0.366065, 1.0]
-     gold_shin = 51.2
-     
-     glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, gold_amb)    
-     glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, gold_diff)
-     glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, gold_spe)
-     glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, gold_shin)
 
-     glutSolidTeapot(1.0)
+
