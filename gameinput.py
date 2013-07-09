@@ -7,6 +7,7 @@ def keyb(key, x, y,ws,ad):
 
     if key == '\033':
         print "exit..."
+        glutLeaveGameMode()
         exit()
     if key == 'w':
         ws = 1
