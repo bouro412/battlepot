@@ -3,45 +3,50 @@ from OpenGL.GLUT import *
 from OpenGL.GLU import *
 import gameinput
 import gameoutput
-ws_states=0
-ad_states=0
+import Character
 
-def display():
-    global ws_states,ad_states
-    gameoutput.draw(ws_states,ad_states)
+class mainit:
+    def __init__(self,p1,ws,ad):
+        self.p1 = p1
+        self.ws = ws
+        self.ad = ad
+            
+    def real_display(self):
+        gameoutput.draw(self.p1,self.ws,self.ad)
 
-def keyboard(key, x, y):
-    global ws_states,ad_states
-    ws_states,ad_states = gameinput.keyb(key, x, y,ws_states,ad_states)
+    def keyboard(self,key, x, y):
+        self.ws,self.ad = gameinput.keyb(key, x, y,self.ws,self.ad)
 
-def keyboardup(key,x,y):
-    global ws_states,ad_states
-    ws_states,ad_states = gameinput.keyup(key,x,y,ws_states,ad_states)
-
-def real_reshape(w,h):
-    gameoutput.reshape(w,h)
-
-def timer(t):
-    glutPostRedisplay()
-    glutTimerFunc(17,timer,t)
+    def keyboardup(self,key,x,y):
+        self.ws,self.ad = gameinput.keyup(key,x,y,self.ws,self.ad)
+        
+    def real_reshape(self,w,h):
+        gameoutput.reshape(w,h)
+        
+    def timer(self,t):
+        glutPostRedisplay()
+        glutTimerFunc(17,self.timer,t)
 
 def main():
     glutInit()
-
+    
+    p1 = Character.player(gameoutput.drawplayer,
+                          [0,0,0],[0,0],0)
+    m = mainit(p1,0,0)
     glutInitWindowSize(640,480)
     glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE)
     glClearColor(0.0, 1.0, 1.0, 1.0)
     glClearDepth(1.0)
     glutCreateWindow("BattlePot")
     
-    glutDisplayFunc(display)
-    glutReshapeFunc(real_reshape)
+    glutDisplayFunc(m.real_display)
+    glutReshapeFunc(m.real_reshape)
     #glutMouseFunc(mouse)
     #glutMotionFunc(dragmotion)
     #glutPassiveMotionFunc(passivemotion)
-    glutKeyboardFunc(keyboard)
-    glutKeyboardUpFunc(keyboardup)
-    glutTimerFunc(0,timer,17)
+    glutKeyboardFunc(m.keyboard)
+    glutKeyboardUpFunc(m.keyboardup)
+    glutTimerFunc(0,m.timer,17)
 
     glutMainLoop()
 

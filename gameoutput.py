@@ -3,9 +3,11 @@ from OpenGL.GLUT import *
 from OpenGL.GLU import *
 from math import *
 import Color
-x=0.0
-y=0.0
-angle=0.0
+import Character
+#x=0.0
+#y=0.0
+#angle=0.0
+"""
 def camera(ws_states, ad_states):
      global x,y,angle
      if ws_states != 0:
@@ -20,27 +22,27 @@ def camera(ws_states, ad_states):
      gluLookAt(camera_position[0],camera_position[1],camera_position[2],
                camera_position[0] + camera_vector[0] * 10,1,
                camera_position[2] + camera_vector[2] * 10,
-               0,1,0)
-
-def draw(ws_states,ad_states):
+               0,1,0)"""
+     
+def draw(p1,ws_states,ad_states):
      glClearColor(0,1,1,1)
      glClearDepth(1)
      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
      glEnable(GL_DEPTH_TEST)
      glEnable(GL_COLOR_MATERIAL)
-
-     camera(ws_states, ad_states)
-
-     #drawxyz()
-     #drawearth()
-     light()
-
-     drawplayer()
+     
+     light()  
+     
+     p1.camera()
+     p1.input(ws_states,ad_states)
+     p1.draw()
+     
      glPushMatrix()
      Color.red()
      glTranslatef(10,0.7,10)
      glutSolidTeapot(1)
      glPopMatrix()
+     
      glDisable(GL_COLOR_MATERIAL)
      glDisable(GL_DEPTH_TEST)
      glutSwapBuffers()
@@ -113,15 +115,9 @@ def light():
     glLightfv(GL_LIGHT0, GL_POSITION, lightpos)
 
 def drawplayer():
-     global x,y,angle
-     glPushMatrix()
-
-     glTranslatef(x,0.7,y)
-     glRotatef(angle,0,1,0)
      Color.gold()
      glutSolidTeapot(1)
- 
-     glPopMatrix()
+
 
 
 
