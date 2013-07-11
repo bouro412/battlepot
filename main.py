@@ -5,13 +5,13 @@ import gameinput
 import gameoutput
 import Character
 
-class mainit:
+class funcs:
     def __init__(self,p1,ws,ad):
         self.p1 = p1
         self.ws = ws
         self.ad = ad
             
-    def real_display(self):
+    def display(self):
         gameoutput.draw(self.p1,self.ws,self.ad)
 
     def keyboard(self,key, x, y):
@@ -20,7 +20,7 @@ class mainit:
     def keyboardup(self,key,x,y):
         self.ws,self.ad = gameinput.keyup(key,x,y,self.ws,self.ad)
         
-    def real_reshape(self,w,h):
+    def reshape(self,w,h):
         gameoutput.reshape(w,h)
         
     def timer(self,t):
@@ -30,13 +30,9 @@ class mainit:
     def passivemotion(self,x,y):
         print "passive ",x,y
 
-def main():
+def inits():
     glutInit()
     
-    p1 = Character.player(gameoutput.drawplayer,
-                          [0,0,0],[0,0],0)
-    m = mainit(p1,0,0)
-
     #glutInitWindowSize(640,480)
     glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE)
     glClearColor(0.0, 1.0, 1.0, 1.0)
@@ -47,15 +43,23 @@ def main():
     glutSetCursor(GLUT_CURSOR_NONE)
 
     #glutCreateWindow("BattlePot")
-    
-    glutDisplayFunc(m.real_display)
-    glutReshapeFunc(m.real_reshape)
+
+def register_funcs():
+    p1 = Character.player(gameoutput.drawplayer,
+                          [0,0,0],[0,0],0)    
+    f = funcs(p1,0,0) 
+    glutDisplayFunc(f.display)
+    glutReshapeFunc(f.reshape)
     #glutMouseFunc(mouse)
     #glutMotionFunc(dragmotion)
-    glutPassiveMotionFunc(m.passivemotion)
-    glutKeyboardFunc(m.keyboard)
-    glutKeyboardUpFunc(m.keyboardup)
-    glutTimerFunc(0,m.timer,17)
+    #glutPassiveMotionFunc(f.passivemotion)
+    glutKeyboardFunc(f.keyboard)
+    glutKeyboardUpFunc(f.keyboardup)
+    glutTimerFunc(0,f.timer,17)
+
+def main():
+    inits()
+    register_funcs()
 
     glutMainLoop()
 
