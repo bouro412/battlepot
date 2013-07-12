@@ -25,15 +25,18 @@ class joyinput:
         self.js.quit()
         pygame.quit()
     
-    def input():
+    def input(self):
         e = pygame.event.get()
         for i in e:
             if i.type == pygame.JOYAXISMOTION:
                 self.axis[i.axis] = i.value
             elif i.type == pygame.JOYBUTTONDOWN:
-                self.button[i.button] = True
+                self.buttons[i.button] = True
+            elif i.type == pygame.JOYBUTTONUP:
+                self.buttons[i.button] = False
             elif i.type == pygame.JOYHATMOTION:
                 pass
+    
 
 def test():
     while True:
@@ -44,10 +47,22 @@ def test():
         except KeyboardInterrupt:
             exit()
 if __name__=="__main__":
+    #"""
     try:
         pad = joyinput()
         pad.init()
         test()
     finally:
         pad.quit()
-
+        """
+    class J:
+        def __enter__(self):
+            tmp=joyinput()
+            tmp.init()
+            self.temp=tmp
+            return tmp
+        def __exit__(self,*):
+            self.temp.quit()
+            return True
+    with J():
+        test()#"""

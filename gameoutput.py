@@ -4,27 +4,8 @@ from OpenGL.GLU import *
 from math import *
 import Color
 import Character
-#x=0.0
-#y=0.0
-#angle=0.0
-"""
-def camera(ws_states, ad_states):
-     global x,y,angle
-     if ws_states != 0:
-          x += cos(radians(angle)) * ws_states * 0.5
-          y += -sin(radians(angle)) * ws_states * 0.5
-     if ad_states != 0:
-          angle += ad_states * 3     
-     glLoadIdentity()
-     camera_position = [x -10 * cos(radians(angle))
-                        ,2,y + 10 * sin(radians(angle))]
-     camera_vector = [x - camera_position[0],0,y - camera_position[2]]
-     gluLookAt(camera_position[0],camera_position[1],camera_position[2],
-               camera_position[0] + camera_vector[0] * 10,1,
-               camera_position[2] + camera_vector[2] * 10,
-               0,1,0)"""
      
-def draw(p1,ws_states,ad_states):
+def draw(p1,joy):
      glClearColor(0,1,1,1)
      glClearDepth(1)
      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -33,13 +14,14 @@ def draw(p1,ws_states,ad_states):
      
      light()  
      
+     joy.input()
      p1.camera()
-     p1.input(ws_states,ad_states)
+     p1.input(joy)
      p1.draw()
      
      glPushMatrix()
      Color.red()
-     glTranslatef(10,0.7,10)
+     glTranslatef(10,0.7,0)
      glutSolidTeapot(1)
      glPopMatrix()
      

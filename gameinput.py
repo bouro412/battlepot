@@ -3,13 +3,14 @@ from OpenGL.GLUT import *
 from OpenGL.GLU import *
 
 
-def keyb(key, x, y,ws,ad):
+def keyb(key, x, y,joy):
 
     if key == '\033':
         print "exit..."
-        glutLeaveGameMode()
+        #glutLeaveGameMode()
+        joy.quit()
         exit()
-    if key == 'w':
+    """if key == 'w':
         ws = 1
     if key == 's':
         ws = -1
@@ -17,11 +18,12 @@ def keyb(key, x, y,ws,ad):
         ad = 1
     if key == "d":
         ad = -1
-    return (ws, ad)
+    return (ws, ad)"""
 
-def keyup(key,x,y,ws,ad):
+def keyup(key,x,y):
  
-    if key == "w":
+    pass
+    """if key == "w":
         ws = 0
     if key == "s":
         ws = 0
@@ -30,5 +32,5 @@ def keyup(key,x,y,ws,ad):
     if key == "d":
         ad = 0
     
-    return (ws, ad)
+    return (ws, ad)"""
 

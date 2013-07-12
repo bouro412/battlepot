@@ -4,21 +4,22 @@ from OpenGL.GLU import *
 import gameinput
 import gameoutput
 import Character
+import playerpot
+import Joystick_input
 
 class funcs:
-    def __init__(self,p1,ws,ad):
+    def __init__(self,p1,joy):
         self.p1 = p1
-        self.ws = ws
-        self.ad = ad
+        self.joy = joy
             
     def display(self):
-        gameoutput.draw(self.p1,self.ws,self.ad)
+        gameoutput.draw(self.p1,self.joy)
 
     def keyboard(self,key, x, y):
-        self.ws,self.ad = gameinput.keyb(key, x, y,self.ws,self.ad)
+        gameinput.keyb(key, x, y,self.joy)
 
     def keyboardup(self,key,x,y):
-        self.ws,self.ad = gameinput.keyup(key,x,y,self.ws,self.ad)
+        gameinput.keyup(key,x,y)
         
     def reshape(self,w,h):
         gameoutput.reshape(w,h)
@@ -33,21 +34,23 @@ class funcs:
 def inits():
     glutInit()
     
-    #glutInitWindowSize(640,480)
+    glutInitWindowSize(640,480)
     glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE)
     glClearColor(0.0, 1.0, 1.0, 1.0)
     glClearDepth(1.0)
     
-    glutGameModeString("1280x800:32@100")
+    """glutGameModeString("1280x800:32@100")
     glutEnterGameMode()
-    glutSetCursor(GLUT_CURSOR_NONE)
+    glutSetCursor(GLUT_CURSOR_NONE)"""
 
-    #glutCreateWindow("BattlePot")
+    glutCreateWindow("BattlePot")
 
 def register_funcs():
-    p1 = Character.player(gameoutput.drawplayer,
-                          [0,0,0],[0,0],0)    
-    f = funcs(p1,0,0) 
+    p1 = playerpot.normalpot(gameoutput.drawplayer,
+                          [0,0,0],[0,0],0)
+    joy = Joystick_input.joyinput()
+    joy.init()
+    f = funcs(p1,joy) 
     glutDisplayFunc(f.display)
     glutReshapeFunc(f.reshape)
     #glutMouseFunc(mouse)
