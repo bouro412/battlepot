@@ -3,7 +3,7 @@ import pygame
 
 class joyinput:
     def __init__(self,axis=[0,0,-1,0,0,-1],
-                 buttons=[False for i in range(10)]):
+                 buttons=[0] * 11):
         self.axis = axis
         self.buttons = buttons
         self.js = None
@@ -27,13 +27,14 @@ class joyinput:
     
     def input(self):
         e = pygame.event.get()
+        self.buttons = [0 for i in range(11)]
         for i in e:
             if i.type == pygame.JOYAXISMOTION:
                 self.axis[i.axis] = i.value
             elif i.type == pygame.JOYBUTTONDOWN:
-                self.buttons[i.button] = True
+                self.buttons[i.button] = 1
             elif i.type == pygame.JOYBUTTONUP:
-                self.buttons[i.button] = False
+                self.buttons[i.button] = -1
             elif i.type == pygame.JOYHATMOTION:
                 pass
     

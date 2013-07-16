@@ -4,8 +4,10 @@ from OpenGL.GLU import *
 from math import *
 import Color
 import Character
+import Object
+bullets = []
      
-def draw(p1,joy):
+def draw(objects,joy):
      glClearColor(0,1,1,1)
      glClearDepth(1)
      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -15,9 +17,15 @@ def draw(p1,joy):
      light()  
      
      joy.input()
-     p1.camera()
-     p1.input(joy)
-     p1.draw()
+
+     for ob in objects:
+          if isinstance(ob, Character.player):
+               ob.camera()
+               ob.input(joy,objects)
+               objects = ob.draw()
+          elif isinstance(ob, Object.Bullet):
+               ob.forward()
+               ob.draw()
      
      glPushMatrix()
      Color.red()

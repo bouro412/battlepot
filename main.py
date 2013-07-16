@@ -8,12 +8,13 @@ import playerpot
 import Joystick_input
 
 class funcs:
-    def __init__(self,p1,joy):
-        self.p1 = p1
+    def __init__(self,joy,objects):
+        self.objects = objects
         self.joy = joy
+        
             
     def display(self):
-        gameoutput.draw(self.p1,self.joy)
+        gameoutput.draw(self.objects,self.joy)
 
     def keyboard(self,key, x, y):
         gameinput.keyb(key, x, y,self.joy)
@@ -46,11 +47,11 @@ def inits():
     glutCreateWindow("BattlePot")
 
 def register_funcs():
-    p1 = playerpot.normalpot(gameoutput.drawplayer,
-                          [0,0,0],[0,0],0)
+    p1 = playerpot.normalpot(0, [0,0,0],[0,0],0)
     joy = Joystick_input.joyinput()
     joy.init()
-    f = funcs(p1,joy) 
+    objects = [p1]
+    f = funcs(joy,objects) 
     glutDisplayFunc(f.display)
     glutReshapeFunc(f.reshape)
     #glutMouseFunc(mouse)
@@ -65,6 +66,7 @@ def main():
     register_funcs()
 
     glutMainLoop()
+
 
 main()
 
