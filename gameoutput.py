@@ -18,15 +18,16 @@ def draw(objects,joy):
      
      joy.input()
 
-     for ob in objects:
+     for i,ob in enumerate(objects):
           if isinstance(ob, Character.player):
                ob.camera()
-               ob.input(joy,objects)
-               objects = ob.draw()
-          elif isinstance(ob, Object.Bullet):
-               ob.forward()
+               objects.extend(ob.input(joy))
                ob.draw()
-     
+          elif isinstance(ob, Object.Bullet):
+               ob.draw()
+               if ob.fadeout():
+                    del objects[i]
+
      glPushMatrix()
      Color.red()
      glTranslatef(10,0.7,0)
@@ -36,7 +37,8 @@ def draw(objects,joy):
      glDisable(GL_COLOR_MATERIAL)
      glDisable(GL_DEPTH_TEST)
      glutSwapBuffers()
-    
+
+"""    
 def drawxyz():
      
      glPushMatrix()
@@ -78,13 +80,13 @@ def drawearth():
                glVertex3f(i,0,j+0.5)
      glEnd()
      glPopMatrix()
-
+"""
 def reshape(w,h):
      glViewport(0,0,w,h)
     
      glMatrixMode(GL_PROJECTION)
      glLoadIdentity()
-     gluPerspective(30,float(w)/h,1.0,100)
+     gluPerspective(45,float(w)/h,1.0,1000)
     
      glMatrixMode(GL_MODELVIEW)
 

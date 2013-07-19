@@ -64,7 +64,7 @@ class player(character):
     def camera(self):
         angle = self.camera_angle
         eye = 1.75
-        distance = 7.5
+        distance = 5.0
         fai = cos(radians(angle[1]))
         x = self.position[0]
         y = self.position[1] + eye

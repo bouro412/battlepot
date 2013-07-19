@@ -14,7 +14,7 @@ class funcs:
         
             
     def display(self):
-        gameoutput.draw(self.objects,self.joy)
+         gameoutput.draw(self.objects,self.joy)
 
     def keyboard(self,key, x, y):
         gameinput.keyb(key, x, y,self.joy)

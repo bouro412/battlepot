@@ -7,6 +7,7 @@ from math import *
 import copy
 import Color
 import Object
+import time
 normal_speed = 0.1
 dash_speed = 0.3
 
@@ -15,23 +16,30 @@ class normalpot(Character.player):
     v = normal_speed
     w = 5
     cameralock = False
+    RTcounter = 0
          
     def visual(self):
         if self.colornum == 0:
             Color.gold()
         glutSolidTeapot(1)
 
-    def input(self,joyinput,objects):
+    def input(self,joyinput):
         axis = joyinput.axis
         buttons = joyinput.buttons
+        add_objects = []
         
         self.LTboost(axis[2]) 
         self.LeftAxis(axis[0],axis[1])
         self.RightAxis(axis[3],axis[4])
         self.LB(buttons[4])
-        objects = self.Xbutton(buttons[2], objects)
+        if self.RTcounter > 0:
+            self.RTshotrecharge()
+        else:
+            ob = self.RTshot(axis[5])
+            if ob != None:
+                add_objects.append(ob)
         
-        return objects
+        return add_objects
    
     def RightAxis(self,Axis3,Axis4):
         if fabs(Axis3) > 0.3:
@@ -53,9 +61,9 @@ class normalpot(Character.player):
     def LeftAxis(self,Axis0,Axis1):
         if self.cameralock == True:
             if fabs(Axis0) > 0.3:
-                self.side_move(-Axis0 * fabs(Axis0) * self.v / 2)
+                self.side_move(-Axis0 * fabs(Axis0) * self.v * 0.8)
             if fabs(Axis1) > 0.3:
-                self.strate_move(-Axis1 * fabs(Axis1) * self.v / 2)
+                self.strate_move(-Axis1 * fabs(Axis1) * self.v * 0.8)
         else:
             if fabs(Axis1) > 0.3 or fabs(Axis0) > 0.3:
                 self.strate_move((Axis0 ** 2 + Axis1 ** 2) * self.v)
@@ -114,13 +122,31 @@ class normalpot(Character.player):
         if Button4 == -1:
             self.cameralock = False
 
-    def Xbutton(self,Button2,objects):
-        if Button2 == 1:
+    def RTshot(self,Axis5):
+        #if not cameralock:
+            
+            
+        if Axis5 > 0:
             posi = copy.deepcopy(self.position)
             vec = copy.deepcopy(self.camera_angle)
-            bullet = Object.Bullet(posi,vec)
-            return objects.append(bullet)
-        else:
-            return objects
+            pot_vec = copy.deepcopy(self.vector)
+            vec[1] = -vec[1]
+            posi[0] += 1.5 * cos(radians(self.vector[0]))
+            posi[2] += 1.5 * -sin(radians(self.vector[0]))
             
+            bullet = Object.Bullet(posi,vec,pot_vec)
+            self.RTshotrecharge()
+            return bullet
+        else:
+            return None
+            
+    def RTshotrecharge(self):
+        self.RTcounter += 17
+        print self.RTcounter
+        if self.cameralock:
+            if self.RTcounter >= 100:
+                self.RTcounter = 0
+        else:
+            if self.RTcounter >= 300:
+                self.RTcounter = 0
 
