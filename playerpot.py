@@ -142,7 +142,6 @@ class normalpot(Character.player):
             
     def RTshotrecharge(self):
         self.RTcounter += 17
-        print self.RTcounter
         if self.cameralock:
             if self.RTcounter >= 100:
                 self.RTcounter = 0
@@ -150,3 +149,7 @@ class normalpot(Character.player):
             if self.RTcounter >= 300:
                 self.RTcounter = 0
 
+    def collision_detection(ob):
+        if isinstance(ob,Object.Bullet):
+            potposition = self.position
+            
