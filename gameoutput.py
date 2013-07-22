@@ -38,49 +38,6 @@ def draw(objects,joy):
      glDisable(GL_DEPTH_TEST)
      glutSwapBuffers()
 
-"""    
-def drawxyz():
-     
-     glPushMatrix()
-     glBegin(GL_LINES)
-     glColor(0,0,0,1)
-     glVertex3f(0,0,0)
-     glVertex3f(100,0,0)
-     glVertex3f(0,0,0)
-     glVertex3f(0,100,0)
-     glVertex3f(0,0,0)
-     glVertex3f(0,0,100)
-     glEnd()
-     glPopMatrix()
-
-def drawearth():
-     red = (1,0,0,1)
-     green = (0,1,0,1)
-     glPushMatrix()    
-     glBegin(GL_QUADS)
-     for i in range(10):
-          for j in range(10):
-               glColor4fv(red)
-               glVertex3f(i,0,j)
-               glVertex3f(i+0.5,0,j)
-               glVertex3f(i+0.5,0,j+0.5)
-               glVertex3f(i,0,j+0.5)
-               glVertex3f(i,0,j)
-               glVertex3f(i-0.5,0,j)
-               glVertex3f(i-0.5,0,j-0.5)
-               glVertex3f(i,0,j-0.5)
-               glColor4fv(green)
-               glVertex3f(i,0,j)
-               glVertex3f(i+0.5,0,j)
-               glVertex3f(i+0.5,0,j-0.5)
-               glVertex3f(i,0,j-0.5)
-               glVertex3f(i,0,j)
-               glVertex3f(i-0.5,0,j)
-               glVertex3f(i-0.5,0,j+0.5)
-               glVertex3f(i,0,j+0.5)
-     glEnd()
-     glPopMatrix()
-"""
 def reshape(w,h):
      glViewport(0,0,w,h)
     
