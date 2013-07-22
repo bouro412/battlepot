@@ -37,6 +37,18 @@ class Bullet:
         self.position[1] += angle4 *  self.speed
         self.position[2] += -angle3 * angle2 * self.speed 
 
+    def back(self):
+        angle1 = cos(radians(self.vector[0]))
+        angle2 = sin(radians(self.vector[0]))
+        angle3 = cos(radians(self.vector[1]))
+        angle4 = sin(radians(self.vector[1]))
+        
+        position = [0,0,0]
+        position[0] = self.position[0] -angle3 * angle1 * self.speed
+        position[1] = self.position[1] -angle4 *  self.speed
+        position[2] = self.position[2] + angle3 * angle2 * self.speed
+        return position
+
     def draw(self):
         if self.vector[0] > 360:
             self.vector[0] += -360

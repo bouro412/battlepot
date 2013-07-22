@@ -8,6 +8,7 @@ import copy
 import Color
 import Object
 import time
+import util
 normal_speed = 0.1
 dash_speed = 0.3
 
@@ -124,8 +125,7 @@ class normalpot(Character.player):
 
     def RTshot(self,Axis5):
         #if not cameralock:
-            
-            
+                       
         if Axis5 > 0:
             posi = copy.deepcopy(self.position)
             vec = copy.deepcopy(self.camera_angle)
@@ -149,7 +149,27 @@ class normalpot(Character.player):
             if self.RTcounter >= 300:
                 self.RTcounter = 0
 
-    def collision_detection(ob):
-        if isinstance(ob,Object.Bullet):
-            potposition = self.position
+    def collision_detection(obj):
+        if isinstance(obj,Object.Bullet):
+            pot = self.position
+            after_bullet = obj.position
+            before_bullet = obj.back()
             
+            before_to_after = util.Vec(after_bullet) - util.Vec(before_bullet)
+            pot_to_before = util.Vec(before_bullet) - util.Vec(pot)
+            pot_to_after = util.Vec(after_bullet) - util.Vec(pot)
+
+            if util.dot(before_to_after,-1 * pot_to_before) < 0:
+                if util.norm(pot_to_before) < 0.8:
+                    return True
+                else: return False
+            elif util.dot(before_to_after,pot_to_after) < 0:
+                if util.norm(pot_to_after) < 0.8:
+                    return True
+                else: return False
+            elif:
+                if util.norm(util.cross3d(before_to_after,pot_to_before)) / util.norm(before_to_after) < 0.8:
+                    return True
+                else: return False
+            
+                

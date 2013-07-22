@@ -42,7 +42,6 @@ class character:
                  cos(radians(vector[0])))
         glRotate(vector[0],0,1,0)
         self.visual()
-
         glPopMatrix()
     def rotate(self,x,y):
         self.vector = [self.vector[0] + x,self.vector[1] + y]

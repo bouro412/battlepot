@@ -56,7 +56,7 @@ class repeat:
     return not self < other
 
 def norm( obj ):
-  return obj.__norm__()
+  return obj.__abs__()
 
 class Vec( tuple ):
   ''' Vec( x1, x2, ... ) -> Vec '''
@@ -94,9 +94,9 @@ class Vec( tuple ):
   def __floordiv__( self, other ):
     return Vec( x // other for x in self )
   def __norm__( self ):
-    return self.x ** 2 + self.y ** 2
+    return sum(x ** 2 for x in self)
   def __abs__( self ):
-    return sqrt( norm( self ) )
+    return sqrt(self.__norm__())
 
 def unit2d( *args ):
   if len( args ) == 1 and isinstance( args[ 0 ], numbers.Number ):
