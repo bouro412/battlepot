@@ -13,8 +13,8 @@ class object:
         
 
 class Bullet:
-    speed = 10.0
-    timelimit = 3000
+    speed = 3.0
+    timelimit = 1000
     time = 0
     def __init__(self,position,vector,pot_vector):
         self.position = position

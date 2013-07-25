@@ -3,6 +3,8 @@ from OpenGL.GLUT import *
 from OpenGL.GLU import *
 from math import sin ,cos,radians, fabs
 import Color
+import util
+import Object
 """
 colornum = int
 position = x,y,z float * 3
@@ -13,6 +15,7 @@ camera_angle = float ? 2
 """
 class character:
     earth = 0.7
+    radius = 0.8
     def __init__(self,colornum,position,vector
                  ,states,camera_angle = [0,0]):
         self.colornum = colornum
@@ -34,7 +37,7 @@ class character:
         glPushMatrix()
 
         glTranslatef(self.position[0],
-                     self.position[1] + 0.7,
+                     self.position[1] + self.earth,
                      self.position[2])
         glRotate(vector[1], 
                  sin(radians(vector[0])), 
@@ -55,6 +58,30 @@ class character:
         angle = self.camera_angle[0] + 90.0
         self.position[0] += cos(radians(angle)) * distance
         self.position[2] += -sin(radians(angle)) * distance
+
+    def collision_detection(self,obj):
+        if isinstance(obj,Object.Bullet):
+            pot = self.position
+            after_bullet = obj.position
+            before_bullet = obj.back()
+            
+            before_to_after = util.Vec(after_bullet) - util.Vec(before_bullet)
+            pot_to_before = util.Vec(before_bullet) - util.Vec(pot)
+            pot_to_after = util.Vec(after_bullet) - util.Vec(pot)
+
+            if util.dot(before_to_after,-1 * pot_to_before) < 0:
+                if util.norm(pot_to_before) < self.radius:
+                    return True
+                else: return False
+            elif util.dot(before_to_after,pot_to_after) < 0:
+                if util.norm(pot_to_after) < self.radius:
+                    return True
+                else: return False
+            else:
+                if util.norm(util.cross3d(before_to_after,pot_to_before)) / util.norm(before_to_after) < self.radius:
+                    return True
+                else: return False
+            
 
         
         
@@ -83,29 +110,12 @@ class player(character):
 
     def input(self):
         pass
-
-    
-    """    
-    def side_move(self,distance):
-        angle = self.camera_angle[0] + 90.0
-        self.position[0] += cos(radians(angle)) * distance
-        self.position[2] += -sin(radians(angle)) * distance
-
-    def RightAxis(self,Axis3,Axis4):
-        if fabs(Axis3) > 0.3:
-            self.camera_angle[0] += -Axis3 * 3
-            if self.camera_angle[0] >= 360:
-                self.camera_angle[0] += -360.0
-            elif self.camera_angle[0] <= -360:
-                self.camera_angle[0] += 360
-        if fabs(Axis4) > 0.3:
-            if Axis4 < 0:
-                if self.camera_angle[1] > -80:
-                    self.camera_angle[1] += Axis4 * 1.5
-            elif Axis4 > 0:
-                if self.camera_angle[1] < 80:
-                    self.camera_angle[1] += Axis4 * 2.5
-    """
-    
-    
   
+class enemy(character):
+    def AI(self):
+        pass
+
+class testsphere(character):
+    def visual(self):
+        Color.green()
+        glutSolidSphere(0.8,10,10)

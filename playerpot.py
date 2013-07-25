@@ -3,21 +3,22 @@ from OpenGL.GLUT import *
 from OpenGL.GLU import *
 import Character
 import pygame
-from math import *
+from math import sin,cos,radians,fabs,degrees,atan
 import copy
 import Color
 import Object
 import time
 import util
-normal_speed = 0.1
-dash_speed = 0.3
 
 class normalpot(Character.player):
 
+    normal_speed = 0.1
+    dash_speed = 0.3
     v = normal_speed
     w = 5
     cameralock = False
     RTcounter = 0
+    radius = 0.8
          
     def visual(self):
         if self.colornum == 0:
@@ -108,11 +109,11 @@ class normalpot(Character.player):
     def LTboost(self,Axis2):
         if self.cameralock == False and Axis2 > 0:
                 self.vector[1] = 5
-                self.v = dash_speed
+                self.v = self.dash_speed
                 self.w = 1
         else:
             self.vector[1] = 0
-            self.v = normal_speed
+            self.v = self.normal_speed
             self.w = 5
          
     
@@ -149,7 +150,7 @@ class normalpot(Character.player):
             if self.RTcounter >= 300:
                 self.RTcounter = 0
 
-    def collision_detection(obj):
+    """def collision_detection(self,obj):
         if isinstance(obj,Object.Bullet):
             pot = self.position
             after_bullet = obj.position
@@ -160,16 +161,18 @@ class normalpot(Character.player):
             pot_to_after = util.Vec(after_bullet) - util.Vec(pot)
 
             if util.dot(before_to_after,-1 * pot_to_before) < 0:
-                if util.norm(pot_to_before) < 0.8:
+                if util.norm(pot_to_before) < self.radius:
                     return True
                 else: return False
             elif util.dot(before_to_after,pot_to_after) < 0:
-                if util.norm(pot_to_after) < 0.8:
+                if util.norm(pot_to_after) < self.radius:
                     return True
                 else: return False
-            elif:
-                if util.norm(util.cross3d(before_to_after,pot_to_before)) / util.norm(before_to_after) < 0.8:
+            else:
+                if util.norm(util.cross3d(before_to_after,pot_to_before)) / util.norm(before_to_after) < self.radius:
                     return True
-                else: return False
+                else: return False"""
+            
+        
             
                 

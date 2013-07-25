@@ -6,6 +6,7 @@ import gameoutput
 import Character
 import playerpot
 import Joystick_input
+import enemypot
 
 class funcs:
     def __init__(self,joy,objects):
@@ -48,9 +49,11 @@ def inits():
 
 def register_funcs():
     p1 = playerpot.normalpot(0, [0,0,0],[0,0],0)
+    e1 = enemypot.normalpot(1,[5,0,5],[0,0],0)
+    e2 = Character.testsphere(0,[0,0,0],[0,0],0)
     joy = Joystick_input.joyinput()
     joy.init()
-    objects = [p1]
+    objects = [p1,e2]
     f = funcs(joy,objects) 
     glutDisplayFunc(f.display)
     glutReshapeFunc(f.reshape)
