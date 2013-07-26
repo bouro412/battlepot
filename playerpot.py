@@ -44,7 +44,7 @@ class normalpot(Character.player):
         return add_objects
    
     def RightAxis(self,Axis3,Axis4):
-        if fabs(Axis3) > 0.3:
+        if fabs(Axis3) > 0.2:
             self.camera_angle[0] += -Axis3 * 2
             if self.camera_angle[0] >= 360:
                 self.camera_angle[0] += -360.0
@@ -52,7 +52,7 @@ class normalpot(Character.player):
                 self.camera_angle[0] += 360
             if self.cameralock:
                 self.vector[0] = self.camera_angle[0]
-        if fabs(Axis4) > 0.3:
+        if fabs(Axis4) > 0.2:
             if Axis4 < 0:
                 if self.camera_angle[1] > -80:
                     self.camera_angle[1] += Axis4 * 1.5

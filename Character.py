@@ -61,7 +61,9 @@ class character:
 
     def collision_detection(self,obj):
         if isinstance(obj,Object.Bullet):
-            pot = self.position
+            pot = [self.position[0],
+                   self.position[1] - self.earth,
+                   self.position[2]]
             after_bullet = obj.position
             before_bullet = obj.back()
             
@@ -118,4 +120,4 @@ class enemy(character):
 class testsphere(character):
     def visual(self):
         Color.green()
-        glutSolidSphere(0.8,10,10)
+        glutSolidSphere(self.colornum,10,10)

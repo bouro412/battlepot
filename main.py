@@ -49,11 +49,11 @@ def inits():
 
 def register_funcs():
     p1 = playerpot.normalpot(0, [0,0,0],[0,0],0)
-    e1 = enemypot.normalpot(1,[5,0,5],[0,0],0)
-    e2 = Character.testsphere(0,[0,0,0],[0,0],0)
+    e1 = enemypot.normalpot(0,[0,0,0],[0,0],0)
+    e2 = enemypot.normalpot(1,[10,0,10],[0,0],0)
     joy = Joystick_input.joyinput()
     joy.init()
-    objects = [p1,e2]
+    objects = [p1,e1,e2]
     f = funcs(joy,objects) 
     glutDisplayFunc(f.display)
     glutReshapeFunc(f.reshape)

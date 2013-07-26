@@ -40,14 +40,12 @@ def draw(objects,joy):
                     if objects[i].collision_detection(objects[j]):
                          print "HIT!!",hitcount
                          hitcount += 1
-                         print "j",objects[j].position,util.norm(util.Vec(objects[j].position))
-                         del objects[j]
+                         objects[j].delete()
                elif isinstance(objects[j],Character.character):
                     if objects[j].collision_detection(objects[i]):
                          print "HIT!!",hitcount
                          hitcount += 1
-                         print "i",objects[i].position
-                         del objects[i]
+                         objects[i].delete()
           
      glDisable(GL_COLOR_MATERIAL)
      glDisable(GL_DEPTH_TEST)

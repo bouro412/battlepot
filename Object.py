@@ -71,3 +71,5 @@ class Bullet:
             return True
         else:
             False
+    def delete(self):
+        self.time = self.timelimit
