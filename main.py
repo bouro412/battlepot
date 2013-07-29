@@ -1,18 +1,23 @@
+# -*- coding: utf-8 -*-
+"""
+このファイルを実行するとゲームが起動する。
+このファイルでは初期化をしており、メインのルーチンはgameoutput中のdraw関数で行われている。
+"""
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
 import gameinput
 import gameoutput
-import Character
+import character
 import playerpot
-import Joystick_input
+import joystick_input
 import enemypot
 
+#glut側で使われる関数群をまとめたクラス
 class funcs:
     def __init__(self,joy,objects):
         self.objects = objects
         self.joy = joy
-        
             
     def display(self):
          gameoutput.draw(self.objects,self.joy)
@@ -48,18 +53,18 @@ def inits():
     glutCreateWindow("BattlePot")
 
 def register_funcs():
+    #オブジェクトリストの初期化
     p1 = playerpot.normalpot(0, [0,0,0],[0,0],0)
     e1 = enemypot.normalpot(0,[0,0,0],[0,0],0)
     e2 = enemypot.normalpot(1,[10,0,10],[0,0],0)
-    joy = Joystick_input.joyinput()
-    joy.init()
     objects = [p1,e1,e2]
+    #ジョイスティック入力の初期化
+    joy = joystick_input.joyinput()
+    joy.init()
+    #glutの初期化
     f = funcs(joy,objects) 
     glutDisplayFunc(f.display)
     glutReshapeFunc(f.reshape)
-    #glutMouseFunc(mouse)
-    #glutMotionFunc(dragmotion)
-    #glutPassiveMotionFunc(f.passivemotion)
     glutKeyboardFunc(f.keyboard)
     glutKeyboardUpFunc(f.keyboardup)
     glutTimerFunc(0,f.timer,17)
@@ -70,6 +75,6 @@ def main():
 
     glutMainLoop()
 
-
-main()
+if __name__ == "__main__":
+    main()
 

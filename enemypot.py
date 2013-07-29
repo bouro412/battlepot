@@ -1,11 +1,11 @@
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
-import Character
-import Color
-import Object
+import character
+import color
+import bullet
 
-class normalpot(Character.enemy):
+class normalpot(character.enemy):
     normal_speed = 0.1
     dash_speed = 0.3
     v = normal_speed
@@ -16,8 +16,8 @@ class normalpot(Character.enemy):
 
     def visual(self):
         if self.colornum == 0:
-            Color.gold()
+            color.gold()
         elif self.colornum == 1:
-            Color.red()
+            color.red()
         glutSolidTeapot(1)
     

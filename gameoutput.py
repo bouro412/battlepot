@@ -1,16 +1,22 @@
+# -*- coding: utf-8 -*-
+
+"""
+メインルーチンはこの中のdraw関数で定義されている。
+"""
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
 from math import *
-import Color
-import Character
-import Object
+import color
+import character
+import bullet
 import util
 #bullets = []
 hitcount = 0
      
 def draw(objects,joy):
      global hitcount
+     #描画設定の初期化
      glClearColor(0,1,1,1)
      glClearDepth(1)
      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -18,39 +24,39 @@ def draw(objects,joy):
      glEnable(GL_COLOR_MATERIAL)
      
      light()  
-     
+     #ジョイスティックの読み取り
      joy.input()
-
-     for i,ob in enumerate(objects):
-          if isinstance(ob, Character.player):
-               ob.camera()
-               objects.extend(ob.input(joy))
-               ob.draw()
-          elif isinstance(ob, Character.enemy):
-               ob.draw()
-          elif isinstance(ob,Character.character):
-               ob.draw()
-          elif isinstance(ob, Object.Bullet):
-               ob.draw()
-               if ob.fadeout():
-                    del objects[i]
+     #オブジェクトの移動と描画
+     # objects = [x for x in objects if x.isalive()]
+     for i, obj in reversed( tuple( enumerate( objects ) ) ):
+          if not obj.isalive():
+               del objects[ i ]
+     for ob in objects[:]:
+          ob.move(joy,objects)
+          
+     #衝突判定
      for i in range(len(objects)-1):
           for j in range(i+1,len(objects)):
-               if isinstance(objects[i],Character.character):
+               if isinstance(objects[i],character.character):
                     if objects[i].collision_detection(objects[j]):
                          print "HIT!!",hitcount
                          hitcount += 1
-                         objects[j].delete()
-               elif isinstance(objects[j],Character.character):
+                         objects[j].kill()
+               elif isinstance(objects[j],character.character):
                     if objects[j].collision_detection(objects[i]):
                          print "HIT!!",hitcount
                          hitcount += 1
-                         objects[i].delete()
+                         objects[i].kill()
+
+     for ob in objects:
+          ob.draw()
           
+     #描画の後処理
      glDisable(GL_COLOR_MATERIAL)
      glDisable(GL_DEPTH_TEST)
      glutSwapBuffers()
 
+#最初に一度だけ呼ばれる。カメラの初期化を行っている。いじる必要はない。
 def reshape(w,h):
      glViewport(0,0,w,h)
     
@@ -60,7 +66,7 @@ def reshape(w,h):
     
      glMatrixMode(GL_MODELVIEW)
 
-
+#光源設定。毎回呼ばれる
 def light():
     lightamb = [0,0,0,1]
     lightdiff = [1,1,1,1]
@@ -76,9 +82,6 @@ def light():
 
     glLightfv(GL_LIGHT0, GL_POSITION, lightpos)
 
-def drawplayer():
-     Color.gold()
-     glutSolidTeapot(1)
 
 
 

@@ -1,19 +1,19 @@
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
-import Character
+import character
 import pygame
 from math import sin,cos,radians,fabs,degrees,atan
 import copy
-import Color
-import Object
+import color
+import bullet
 import time
 import util
 
-class normalpot(Character.player):
+class normalpot(character.player):
 
     normal_speed = 0.1
-    dash_speed = 0.3
+    dash_speed = 3.0
     v = normal_speed
     w = 5
     cameralock = False
@@ -22,10 +22,10 @@ class normalpot(Character.player):
          
     def visual(self):
         if self.colornum == 0:
-            Color.gold()
+            color.gold()
         glutSolidTeapot(1)
 
-    def input(self,joyinput):
+    def move(self,joyinput,objects):
         axis = joyinput.axis
         buttons = joyinput.buttons
         add_objects = []
@@ -39,9 +39,7 @@ class normalpot(Character.player):
         else:
             ob = self.RTshot(axis[5])
             if ob != None:
-                add_objects.append(ob)
-        
-        return add_objects
+                objects.append(ob)
    
     def RightAxis(self,Axis3,Axis4):
         if fabs(Axis3) > 0.2:
@@ -125,7 +123,6 @@ class normalpot(Character.player):
             self.cameralock = False
 
     def RTshot(self,Axis5):
-        #if not cameralock:
                        
         if Axis5 > 0:
             posi = copy.deepcopy(self.position)
@@ -135,9 +132,9 @@ class normalpot(Character.player):
             posi[0] += 1.5 * cos(radians(self.vector[0]))
             posi[2] += 1.5 * -sin(radians(self.vector[0]))
             
-            bullet = Object.Bullet(posi,vec,pot_vec)
+            result = bullet.Bullet(posi,vec,pot_vec)
             self.RTshotrecharge()
-            return bullet
+            return result
         else:
             return None
             
@@ -150,29 +147,5 @@ class normalpot(Character.player):
             if self.RTcounter >= 300:
                 self.RTcounter = 0
 
-    """def collision_detection(self,obj):
-        if isinstance(obj,Object.Bullet):
-            pot = self.position
-            after_bullet = obj.position
-            before_bullet = obj.back()
-            
-            before_to_after = util.Vec(after_bullet) - util.Vec(before_bullet)
-            pot_to_before = util.Vec(before_bullet) - util.Vec(pot)
-            pot_to_after = util.Vec(after_bullet) - util.Vec(pot)
-
-            if util.dot(before_to_after,-1 * pot_to_before) < 0:
-                if util.norm(pot_to_before) < self.radius:
-                    return True
-                else: return False
-            elif util.dot(before_to_after,pot_to_after) < 0:
-                if util.norm(pot_to_after) < self.radius:
-                    return True
-                else: return False
-            else:
-                if util.norm(util.cross3d(before_to_after,pot_to_before)) / util.norm(before_to_after) < self.radius:
-                    return True
-                else: return False"""
-            
-        
             
                 

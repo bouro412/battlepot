@@ -56,7 +56,7 @@ class repeat:
     return not self < other
 
 def norm( obj ):
-  return obj.__abs__()
+  return obj.__norm__()
 
 class Vec( tuple ):
   ''' Vec( x1, x2, ... ) -> Vec '''
