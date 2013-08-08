@@ -9,9 +9,7 @@ from OpenGL.GLU import *
 import gameinput
 import gameoutput
 import character
-import playerpot
 import joystick_input
-import enemypot
 
 #glut側で使われる関数群をまとめたクラス
 class funcs:
@@ -20,7 +18,7 @@ class funcs:
         self.joy = joy
             
     def display(self):
-         gameoutput.draw(self.objects,self.joy)
+         gameoutput.step(self.objects,self.joy)
 
     def keyboard(self,key, x, y):
         gameinput.keyb(key, x, y,self.joy)
@@ -29,7 +27,14 @@ class funcs:
         gameinput.keyup(key,x,y)
         
     def reshape(self,w,h):
-        gameoutput.reshape(w,h)
+        glViewport(0,0,w,h)
+    
+        glMatrixMode(GL_PROJECTION)
+        glLoadIdentity()
+        gluPerspective(45,float(w)/h,1.0,1000)
+    
+        glMatrixMode(GL_MODELVIEW)
+
         
     def timer(self,t):
         glutPostRedisplay()
@@ -54,9 +59,9 @@ def inits():
 
 def register_funcs():
     #オブジェクトリストの初期化
-    p1 = playerpot.normalpot(0, [0,0,0],[0,0],0)
-    e1 = enemypot.normalpot(0,[0,0,0],[0,0],0)
-    e2 = enemypot.normalpot(1,[10,0,10],[0,0],0)
+    p1 = character.normalplayer(0, [0,0,0],[0,0],0)
+    e1 = character.normalenemy(0,[0,0,0],[0,0],0)
+    e2 = character.normalenemy(1,[10,0,10],[0,0],0)
     objects = [p1,e1,e2]
     #ジョイスティック入力の初期化
     joy = joystick_input.joyinput()

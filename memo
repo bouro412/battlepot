@@ -1,0 +1,5 @@
+・charcter.pyの中身をgameobject内にコピー、統合
+・gameoutput.py内の関数drawをstepに変更2
+・gameoutput内の関数reshapeをmain.py内にコピー、元のは削除。
+・player.pyとenemy.pyの中身をcharacter.pyに移動
+・character.pyのcharacterクラス内にあった関数collision_detectionをgameoutput内に移動

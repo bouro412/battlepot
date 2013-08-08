@@ -3,7 +3,6 @@ from OpenGL.GLUT import *
 from OpenGL.GLU import *
 from math import *
 import color
-import character
 import gameobject
 
 
