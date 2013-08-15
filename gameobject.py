@@ -21,7 +21,7 @@ class gameobject:
 colornum = intひとつ。機体の色を決めたい、未実装。
 position = [x,y,z] float3つで機体の座標を表す。 
 vector = 機体の向き。float2つで初期の向きから左回転で水平方向の回転（yが軸）と縦方向の回転（機体の前方が軸）の角度をdegreesで表す
-states = HPとか書きたい。未実装
+states = [ID,HP]
 camera_angle = float2つでカメラの向きを表す。表し方はvectorと同じ
 
 """
@@ -50,6 +50,10 @@ class character(gameobject):
         glTranslatef(self.position[0],
                      self.position[1] + self.earth,
                      self.position[2])
+        """glRotate(vector[2]
+                 ,cos(radians(vector[0]))
+                 ,0
+                 ,sin(radians(vector[0])))"""
         glRotate(vector[1], 
                  sin(radians(vector[0])), 
                  0,
@@ -138,4 +142,7 @@ class player(character):
 class enemy(character):
     def AI(self):
         pass
+    def rotate(self,x,y):
+        self.vector = [self.vector[0] + x,self.vector[1] + y]
+    
 

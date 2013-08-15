@@ -27,11 +27,7 @@ def step(objects,joy):
      light()  
      #ジョイスティックの読み取り
      joy.input()
-     #オブジェクトの削除
-     # objects = [x for x in objects if x.isalive()]
-     for i, obj in reversed( tuple( enumerate( objects ) ) ):
-          if not obj.isalive():
-               del objects[ i ]
+ 
      #オブジェクトの移動
      for ob in objects[:]:
           ob.move(joy,objects)
@@ -41,7 +37,7 @@ def step(objects,joy):
           for j in range(i+1,len(objects)):
                if isinstance(objects[i],gameobject.character):
                     if collision_detection(objects[i],objects[j]):
-                         print "HIT!!",hitcount
+                         print "HIT!!",hitcount,i
                          hitcount += 1
                          objects[j].kill()
                elif isinstance(objects[j],gameobject.character):
@@ -49,6 +45,13 @@ def step(objects,joy):
                          print "HIT!!",hitcount
                          hitcount += 1
                          objects[i].kill()
+
+    #オブジェクトの削除
+     # objects = [x for x in objects if x.isalive()]
+     for i, obj in reversed( tuple( enumerate( objects ) ) ):
+          if not obj.isalive():
+               del objects[ i ]
+
      #オブジェクトの描画
      for ob in objects:
           ob.draw()
@@ -83,6 +86,8 @@ def collision_detection(chara,obj):
         画面に表示する際はこの値だけself.positionのy座標にプラスして表示しているので、
         当たり判定でもそこを考慮して計算する必要がある。
         """
+        if chara.states[0] == obj.states[0]:
+             return False
         if isinstance(obj,bullet.Bullet):
             pot = [chara.position[0],
                    chara.position[1] - chara.earth,
