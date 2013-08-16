@@ -27,7 +27,9 @@ class normalplayer(gameobject.player):
     RTcounter = 0
     recovery = None
     radius = 0.8
-         
+    slip = util.Vec(0,0,0) 
+    friction = 0.01
+    
     def visual(self):
         if self.colornum == 0:
             color.gold()
@@ -40,6 +42,7 @@ class normalplayer(gameobject.player):
 
         self.RightAxis(joyinput)
         self.LB(joyinput)
+        self.slipmove()
 
         if self.recovery != None:
             self.recovery[1] += -17
@@ -148,7 +151,7 @@ class normalplayer(gameobject.player):
             """
     def LTstep(self,count,axis,joyinput,objects):
         if count > 0:
-            v = (count / 135) ** 2 
+            v = (count / 150) ** 2 + 0.15 
             if axis[1] < -0.5:
                 self.vector[1] = -10
                 self.strate_move(v)
@@ -157,10 +160,10 @@ class normalplayer(gameobject.player):
                 self.strate_move(-v)
             elif axis[0] < -0.5:
                 self.side_move(v)
-                self.vector[2] = 10
+                self.vector[2] = -10
             elif axis[0] > 0.5:
                 self.side_move(-v)
-                self.vector[2] = -10
+                self.vector[2] = 10
             else:
                 self.recovery = None
         else:
@@ -245,8 +248,9 @@ class normalplayer(gameobject.player):
             posi = copy.deepcopy(self.position)
             vec = copy.deepcopy(self.camera_angle)
             vec[1] = -vec[1]
-            posi[0] += 1.5 * cos(radians(self.vector[0]))
-            posi[2] += 1.5 * -sin(radians(self.vector[0]))
+            posi += (1.5 * cos(radians(self.vector[0]))
+                     ,0
+                     ,1.5 * -sin(radians(self.vector[0])))
             
             result = bullet.Bullet(posi,vec,[self.states[0],1])
             self.RTshotrecharge()
@@ -262,9 +266,16 @@ class normalplayer(gameobject.player):
         else:
             if self.RTcounter >= 300:
                 self.RTcounter = 0
+    def slipmove(self):
+        self.position += self.slip
+        level_slip = util.Vec(self.slip[0],0,self.slip[2])
+        if abs(level_slip) < self.friction:
+            self.slip -= level_slip
+        else:
+            self.slip -= level_slip * self.friction / abs(level_slip)
 
     def jump(self,joyinput):
-        
+        pass
 
 class normalenemy(gameobject.enemy):
     normal_speed = 0.1
@@ -326,8 +337,9 @@ class normalenemy(gameobject.enemy):
         posi = copy.deepcopy(self.position)
         vec = player_angle
         vec[1] = -vec[1]
-        posi[0] += 1.5 * cos(radians(self.vector[0]))
-        posi[2] += 1.5 * -sin(radians(self.vector[0]))
+        posi += (1.5 * cos(radians(self.vector[0]))
+                 ,0
+                 ,1.5 * -sin(radians(self.vector[0])))
             
         result = bullet.guided_bullet(posi,vec,[self.states[0],1])
         self.shot_recharge()

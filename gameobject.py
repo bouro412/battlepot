@@ -32,7 +32,7 @@ class character(gameobject):
                  ,states,camera_angle = [0,0]):
         self.colornum = colornum
         self.vector = vector
-        self.position = position
+        self.position = util.Vec(position)
         self.states = states
         self.camera_angle = camera_angle
 
@@ -50,10 +50,10 @@ class character(gameobject):
         glTranslatef(self.position[0],
                      self.position[1] + self.earth,
                      self.position[2])
-        """glRotate(vector[2]
+        glRotate(vector[2]
                  ,cos(radians(vector[0]))
                  ,0
-                 ,sin(radians(vector[0])))"""
+                 ,-sin(radians(vector[0])))
         glRotate(vector[1], 
                  sin(radians(vector[0])), 
                  0,
@@ -66,13 +66,15 @@ class character(gameobject):
     
     def strate_move(self,distance):
         angle = self.vector[0]
-        self.position[0] += cos(radians(angle)) * distance
-        self.position[2] += -sin(radians(angle)) * distance
+        self.position += (cos(radians(angle)) * distance
+                          ,0
+                          ,-sin(radians(angle)) * distance)
 
     def side_move(self,distance):
         angle = self.camera_angle[0] + 90.0
-        self.position[0] += cos(radians(angle)) * distance
-        self.position[2] += -sin(radians(angle)) * distance
+        self.position  += (cos(radians(angle)) * distance
+                           ,0
+                           ,-sin(radians(angle)) * distance)
 
     def collision_detection(self,obj):
         """

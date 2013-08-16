@@ -15,7 +15,7 @@ class Bullet(gameobject.gameobject):
     timelimit = 1000
 
     def __init__(self,position,vector,states):
-        self.position = position
+        self.position = util.Vec(position)
         self.vector = vector
         self.states = states
         #statesは[ID,damage]のリスト
@@ -32,9 +32,9 @@ class Bullet(gameobject.gameobject):
         angle3 = cos(radians(self.vector[1]))
         angle4 = sin(radians(self.vector[1]))
         
-        self.position[0] += angle3 * angle1 * self.speed
-        self.position[1] += angle4 *  self.speed
-        self.position[2] += -angle3 * angle2 * self.speed 
+        self.position += (angle3 * angle1 * self.speed
+                          ,angle4 *  self.speed
+                          , -angle3 * angle2 * self.speed) 
 
     def back(self):
         angle1 = cos(radians(self.vector[0]))
@@ -42,10 +42,9 @@ class Bullet(gameobject.gameobject):
         angle3 = cos(radians(self.vector[1]))
         angle4 = sin(radians(self.vector[1]))
         
-        position = [0,0,0]
-        position[0] = self.position[0] -angle3 * angle1 * self.speed
-        position[1] = self.position[1] -angle4 *  self.speed
-        position[2] = self.position[2] + angle3 * angle2 * self.speed
+        position = self.position + (-angle3 * angle1 * self.speed
+                                     ,-angle4 * self.speed
+                                     ,angle3 * angle2 * self.speed)
         return position
 
     def draw(self):
@@ -73,7 +72,7 @@ class guided_bullet(Bullet):
     timelimit = 3000
     w = 2.0
     def to_player_angles(self,player):
-        vector = util.Vec(player.position) - util.Vec(self.position)
+        vector = player.position - self.position
         vector = vector / abs(vector)
         theta1 = asin(vector[1])
         theta0 = atan((vector[2] / cos(theta1)) / -(vector[0] / cos(theta1)))

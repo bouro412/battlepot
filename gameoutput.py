@@ -89,13 +89,11 @@ def collision_detection(chara,obj):
         if chara.states[0] == obj.states[0]:
              return False
         if isinstance(obj,bullet.Bullet):
-            pot = [chara.position[0],
-                   chara.position[1] - chara.earth,
-                   chara.position[2]]
+            pot = chara.position - (0,chara.earth,0)
             after_bullet = obj.position
             before_bullet = obj.back()
             
-            before_to_after = util.Vec(after_bullet) - util.Vec(before_bullet)
+            before_to_after = after_bullet - util.Vec(before_bullet)
             pot_to_before = util.Vec(before_bullet) - util.Vec(pot)
             pot_to_after = util.Vec(after_bullet) - util.Vec(pot)
 
