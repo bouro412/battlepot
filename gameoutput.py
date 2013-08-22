@@ -18,6 +18,7 @@ hitcount = 0
 def step(objects,joy):
      global hitcount
      #描画設定の初期化
+     glMatrixMode(GL_MODELVIEW)
      glClearColor(0,1,1,1)
      glClearDepth(1)
      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -37,11 +38,13 @@ def step(objects,joy):
           for j in range(i+1,len(objects)):
                if isinstance(objects[i],gameobject.character):
                     if collision_detection(objects[i],objects[j]):
+                         objects[i].damage(objects[j].states[1])
                          print "HIT!!",hitcount,i
                          hitcount += 1
                          objects[j].kill()
                elif isinstance(objects[j],gameobject.character):
                     if collision_detection(objects[j],objects[i]):
+                         objects[j].damage(objects[i].states[1])
                          print "HIT!!",hitcount
                          hitcount += 1
                          objects[i].kill()
@@ -55,6 +58,7 @@ def step(objects,joy):
      #オブジェクトの描画
      for ob in objects:
           ob.draw()
+     draw2D(objects)
           
      #描画の後処理
      glDisable(GL_COLOR_MATERIAL)
@@ -76,6 +80,54 @@ def light():
     glEnable(GL_LIGHTING)
 
     glLightfv(GL_LIGHT0, GL_POSITION, lightpos)
+
+def draw2D(objects):
+     glMatrixMode(GL_PROJECTION)
+     glPushMatrix()
+     glLoadIdentity()
+     gluOrtho2D(0, 640, 0, 480)
+     #MODELVIEW行列を操作
+     glMatrixMode(GL_MODELVIEW) 
+     glPushMatrix() #MODELVIEW行列を保存
+     glLoadIdentity()
+     #いろいろ無効にする
+     glDisable(GL_DEPTH_TEST)
+     glDisable(GL_LIGHTING)
+     glDisable(GL_LIGHT0)
+     #描画
+     glBegin(GL_QUADS)
+     glColor(0,0,0,1)
+     glVertex2f(10,460)
+     glVertex2f(10,430)
+     glVertex2f(400,430)
+     glVertex2f(400,460)
+     glEnd()
+
+     playerHP = objects[0].states[1]
+     glBegin(GL_QUADS)
+     glColor(0,1,0,1)
+     glVertex2f(10,460)
+     glVertex2f(10,430)
+     glVertex2f(10 + playerHP * 39 ,430)
+     glVertex2f(10 +playerHP * 39,460)
+     glEnd()
+
+     glBegin(GL_LINES)
+     glColor(1,1,1,1)
+     glVertex2f(320,230)
+     glVertex2f(320,240)
+     glVertex2f(315,235)
+     glVertex2f(325,235)
+     glEnd()
+
+     #元に戻す（3D用へ戻る）
+     glEnable(GL_DEPTH_TEST)
+     glEnable(GL_LIGHTING)
+     glEnable(GL_LIGHT0)
+     glPopMatrix() #MODELVIEW行列をもとに戻す
+     glMatrixMode(GL_PROJECTION) 
+     glPopMatrix() #PROJECTION行列をもとに戻す
+
 
 def collision_detection(chara,obj):
         """

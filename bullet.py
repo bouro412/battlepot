@@ -70,7 +70,7 @@ class Bullet(gameobject.gameobject):
 class guided_bullet(Bullet):
     speed = 1.0
     timelimit = 3000
-    w = 2.0
+    w = 1.5
     def to_player_angles(self,player):
         vector = player.position - self.position
         vector = vector / abs(vector)

@@ -31,7 +31,7 @@ class funcs:
     
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
-        gluPerspective(45,float(w)/h,1.0,1000)
+        gluPerspective(30,float(w)/h,1.0,1000)
     
         glMatrixMode(GL_MODELVIEW)
 

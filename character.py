@@ -7,7 +7,7 @@
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
-from math import sin ,cos,radians, fabs, degrees, atan,asin,acos,pi
+from math import sin ,cos,radians, fabs, degrees, atan,asin,acos,pi,sqrt
 import copy
 import color
 import util
@@ -285,6 +285,7 @@ class normalenemy(gameobject.enemy):
     cameralock = False
     shot_counter = 0
     radius = 0.8
+    before_player_position = None
 
     def visual(self):
         if self.colornum == 0:
@@ -293,8 +294,8 @@ class normalenemy(gameobject.enemy):
             color.red()
         glutSolidTeapot(1)
 
-    def to_player_angles(self,player):
-        vector = util.Vec(player.position) - util.Vec(self.position)
+    def to_player_angles(self,player_position):
+        vector = util.Vec(player_position) - util.Vec(self.position)
         vector = vector / abs(vector)
         theta1 = asin(vector[1])
         theta0 = atan((vector[2] / cos(theta1)) / -(vector[0] / cos(theta1)))
@@ -325,15 +326,16 @@ class normalenemy(gameobject.enemy):
                     self.vector[x] += -self.w
     
     def move(self,joy,objects):
-        player_angle = self.to_player_angles(objects[0])
+        player_angle = self.to_player_angles(objects[0].position)
         self.rotate_player_direction(player_angle)
         if self.shot_counter > 0:
             self.shot_recharge()
         else:
-            ob = self.shot_player(player_angle)
-            objects.append(ob)
+            ob = self.hensa_shot(objects)
+            if ob != 0:
+                objects.append(ob)
 
-    def shot_player(self,player_angle):
+    def shot_player(self,player_angle,bullet_type):
         posi = copy.deepcopy(self.position)
         vec = player_angle
         vec[1] = -vec[1]
@@ -341,11 +343,32 @@ class normalenemy(gameobject.enemy):
                  ,0
                  ,1.5 * -sin(radians(self.vector[0])))
             
-        result = bullet.guided_bullet(posi,vec,[self.states[0],1])
+        if bullet_type == 0:
+            result = bullet.Bullet(posi,vec,[self.states[0],1])
+        if bullet_type == 1:
+            result = bullet.guided_bullet(posi, vec,[self.states[0],1])
         self.shot_recharge()
         return result
 
-    
+    def hensa_shot(self,objects):
+        player = objects[0]
+        if self.before_player_position == None:
+            self.before_player_position = copy.deepcopy(player.position)
+            return 0
+        else:
+            player_move = player.position - self.before_player_position
+            bullet_speed = 3.0
+            player_speed = abs(player_move)
+            to_player = player.position - self.position
+            
+            a = player_speed ** 2 - bullet_speed ** 2
+            b = util.dot(player_move , to_player)
+            c = abs(to_player) ** 2
+
+            t = (b - sqrt(b ** 2 - a * c)) / a
+            target = player.position + player_move * t
+            self.before_player_position = None
+            return self.shot_player(self.to_player_angles(target),0)
     
     def shot_recharge(self):
         self.shot_counter += 17

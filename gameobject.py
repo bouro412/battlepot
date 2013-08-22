@@ -19,7 +19,7 @@ class gameobject:
 
 """
 colornum = intひとつ。機体の色を決めたい、未実装。
-position = [x,y,z] float3つで機体の座標を表す。 
+position = util.Vec([x,y,z]) float3つで機体の座標を表す。 
 vector = 機体の向き。float2つで初期の向きから左回転で水平方向の回転（yが軸）と縦方向の回転（機体の前方が軸）の角度をdegreesで表す
 states = [ID,HP]
 camera_angle = float2つでカメラの向きを表す。表し方はvectorと同じ
@@ -109,7 +109,9 @@ class character(gameobject):
                     return True
                 else: return False
             
-
+    def damage(self,damage):
+        if self.states[1] > 0:
+            self.states[1] -= damage
         
         
 class player(character):
@@ -120,7 +122,7 @@ class player(character):
     def camera(self):
         angle = self.camera_angle
         eye = 1.75
-        distance = 5.0
+        distance = 8.0
         fai = cos(radians(angle[1]))
         x = self.position[0]
         y = self.position[1] + eye
