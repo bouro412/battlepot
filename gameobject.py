@@ -19,9 +19,9 @@ class gameobject:
 
 """
 colornum = intひとつ。機体の色を決めたい、未実装。
-position = [x,y,z] float3つで機体の座標を表す。 
+position = util.Vec([x,y,z]) float3つで機体の座標を表す。 
 vector = 機体の向き。float2つで初期の向きから左回転で水平方向の回転（yが軸）と縦方向の回転（機体の前方が軸）の角度をdegreesで表す
-states = HPとか書きたい。未実装
+states = [ID,HP]
 camera_angle = float2つでカメラの向きを表す。表し方はvectorと同じ
 
 """
@@ -32,7 +32,7 @@ class character(gameobject):
                  ,states,camera_angle = [0,0]):
         self.colornum = colornum
         self.vector = vector
-        self.position = position
+        self.position = util.Vec(position)
         self.states = states
         self.camera_angle = camera_angle
 
@@ -50,6 +50,10 @@ class character(gameobject):
         glTranslatef(self.position[0],
                      self.position[1] + self.earth,
                      self.position[2])
+        glRotate(vector[2]
+                 ,cos(radians(vector[0]))
+                 ,0
+                 ,-sin(radians(vector[0])))
         glRotate(vector[1], 
                  sin(radians(vector[0])), 
                  0,
@@ -62,13 +66,15 @@ class character(gameobject):
     
     def strate_move(self,distance):
         angle = self.vector[0]
-        self.position[0] += cos(radians(angle)) * distance
-        self.position[2] += -sin(radians(angle)) * distance
+        self.position += (cos(radians(angle)) * distance
+                          ,0
+                          ,-sin(radians(angle)) * distance)
 
     def side_move(self,distance):
         angle = self.camera_angle[0] + 90.0
-        self.position[0] += cos(radians(angle)) * distance
-        self.position[2] += -sin(radians(angle)) * distance
+        self.position  += (cos(radians(angle)) * distance
+                           ,0
+                           ,-sin(radians(angle)) * distance)
 
     def collision_detection(self,obj):
         """
@@ -103,7 +109,9 @@ class character(gameobject):
                     return True
                 else: return False
             
-
+    def damage(self,damage):
+        if self.states[1] > 0:
+            self.states[1] -= damage
         
         
 class player(character):
@@ -114,7 +122,7 @@ class player(character):
     def camera(self):
         angle = self.camera_angle
         eye = 1.75
-        distance = 5.0
+        distance = 8.0
         fai = cos(radians(angle[1]))
         x = self.position[0]
         y = self.position[1] + eye
@@ -138,4 +146,7 @@ class player(character):
 class enemy(character):
     def AI(self):
         pass
+    def rotate(self,x,y):
+        self.vector = [self.vector[0] + x,self.vector[1] + y]
+    
 

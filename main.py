@@ -31,7 +31,7 @@ class funcs:
     
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
-        gluPerspective(45,float(w)/h,1.0,1000)
+        gluPerspective(30,float(w)/h,1.0,1000)
     
         glMatrixMode(GL_MODELVIEW)
 
@@ -59,10 +59,10 @@ def inits():
 
 def register_funcs():
     #オブジェクトリストの初期化
-    p1 = character.normalplayer(0, [0,0,0],[0,0],0)
-    e1 = character.normalenemy(0,[0,0,0],[0,0],0)
-    e2 = character.normalenemy(1,[10,0,10],[0,0],0)
-    objects = [p1,e1,e2]
+    p1 = character.normalplayer(0, [0,0,0],[0,0,0],[0,10])
+    e1 = character.normalenemy(0,[0,0,0],[0,0,0],0)
+    e2 = character.normalenemy(1,[10,0,10],[0,0,0],[1,10])
+    objects = [p1,e2]
     #ジョイスティック入力の初期化
     joy = joystick_input.joyinput()
     joy.init()
