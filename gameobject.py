@@ -26,8 +26,10 @@ camera_angle = float2つでカメラの向きを表す。表し方はvectorと�
 
 """
 class character(gameobject):
-    earth = 0.7
+    earth = 0.75
     radius = 0.8
+    onearth = True
+    before_position = util.Vec(0,0,0)
     def __init__(self,colornum,position,vector
                  ,states,camera_angle = [0,0]):
         self.colornum = colornum
@@ -148,5 +150,7 @@ class enemy(character):
         pass
     def rotate(self,x,y):
         self.vector = [self.vector[0] + x,self.vector[1] + y]
+
+
     
 

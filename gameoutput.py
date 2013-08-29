@@ -12,6 +12,7 @@ import color
 import gameobject
 import character
 import bullet
+import mapobject
 import util
 hitcount = 0
      
@@ -58,6 +59,16 @@ def step(objects,joy):
      #オブジェクトの描画
      for ob in objects:
           ob.draw()
+
+     color.yellow_plastic()
+     glBegin(GL_QUADS)
+     glNormal3f(0,1,0)
+     glVertex3f(0,0,0)
+     glVertex3f(100,0,0)
+     glVertex3f(100,0,100)
+     glVertex3f(0,0,100)
+     glEnd()
+
      draw2D(objects)
           
      #描画の後処理
@@ -70,7 +81,7 @@ def light():
     lightamb = [0,0,0,1]
     lightdiff = [1,1,1,1]
     lightspe = [1,1,1,1]
-    lightpos = [1,1,1,0]
+    lightpos = [50,1,50,0]
 
     glLightfv(GL_LIGHT0, GL_AMBIENT, lightamb)
     glLightfv(GL_LIGHT0, GL_DIFFUSE, lightdiff)
@@ -161,7 +172,9 @@ def collision_detection(chara,obj):
                 if abs(util.cross3d(before_to_after,pot_to_before)) / abs(before_to_after) < chara.radius:
                     return True
                 else: return False
-
-
+        
+        #if isinstance(obj,mapobject.floor):
+             #if chara.position[]
+                  
 
 
