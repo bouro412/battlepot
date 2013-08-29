@@ -34,3 +34,4 @@ class floor(gameobject.gameobject):
         for x in coordinates:
             glVertex3fv(x)
         glEnd()
+

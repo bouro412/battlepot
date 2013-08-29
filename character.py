@@ -27,7 +27,6 @@ class normalplayer(gameobject.player):
     RTcounter = 0
     recovery = None
     radius = 0.8
-    before_position = [0,0,0]
     slip = util.Vec(0,0,0) 
     friction = 0.01
     
@@ -288,7 +287,6 @@ class normalenemy(gameobject.enemy):
     shot_counter = 0
     radius = 0.8
     before_player_position = None
-    before_position = [0,0,0]
 
     def visual(self):
         if self.colornum == 0:
