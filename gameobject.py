@@ -29,6 +29,8 @@ class character(gameobject):
     earth = 0.75
     radius = 0.8
     onearth = True
+    y_speed = 0
+    fallspeed_limit = -20.0 / 60
     before_position = util.Vec(0,0,0)
     def __init__(self,colornum,position,vector
                  ,states,camera_angle = [0,0]):
@@ -40,6 +42,13 @@ class character(gameobject):
 
     def visual(self):
         pass
+    def move(self,joy,objects):
+        self.before_position = self.position
+        if self.y_speed >= self.fallspeed_limit:
+            self.position += (0,self.y_speed,0)
+        else:
+            self.position += (0,self.fallspeed_limit,0)
+        self.gravity()
         
     def draw(self):
         if self.vector[0] > 360:
@@ -78,43 +87,15 @@ class character(gameobject):
                            ,0
                            ,-sin(radians(angle)) * distance)
 
-    def collision_detection(self,obj):
-        """
-        もともとcharacterクラス内で書かれていたので、
-        selfはcharacterのインスタンスを指します。
-        self.positionは長さ3のリストで（x座標、y座標,z座標）となります。
-        self.earthはpotが地面にめり込まないための定数です。
-        画面に表示する際はこの値だけself.positionのy座標にプラスして表示しているので、
-        当たり判定でもそこを考慮して計算する必要がある。
-        """
-        if isinstance(obj,bullet.Bullet):
-            pot = [self.position[0],
-                   self.position[1] - self.earth,
-                   self.position[2]]
-            after_bullet = obj.position
-            before_bullet = obj.back()
-            
-            before_to_after = util.Vec(after_bullet) - util.Vec(before_bullet)
-            pot_to_before = util.Vec(before_bullet) - util.Vec(pot)
-            pot_to_after = util.Vec(after_bullet) - util.Vec(pot)
-
-            if util.dot(before_to_after,-1 * pot_to_before) < 0:
-                if abs(pot_to_before) < self.radius:
-                    return True
-                else: return False
-            elif util.dot(before_to_after,pot_to_after) < 0:
-                if abs(pot_to_after) < self.radius:
-                    return True
-                else: return False
-            else:
-                if abs(util.cross3d(before_to_after,pot_to_before)) / abs(before_to_after) < self.radius:
-                    return True
-                else: return False
-            
     def damage(self,damage):
         if self.states[1] > 0:
             self.states[1] -= damage
-        
+    def gravity(self):
+        if not self.onearth:
+            self.y_speed -= 40.0 / 3600
+    def jump(self):
+        self.y_speed = 20.0 / 60
+        self.position += (0,20.0/60,0)
         
 class player(character):
     def draw(self):
@@ -142,8 +123,7 @@ class player(character):
                   x,y,z,
                   0,1,0)
 
-    def move(self):
-        pass
+    
   
 class enemy(character):
     def AI(self):

@@ -37,19 +37,9 @@ def step(objects,joy):
      #衝突判定
      for i in range(len(objects)-1):
           for j in range(i+1,len(objects)):
-               if isinstance(objects[i],gameobject.character):
-                    if collision_detection(objects[i],objects[j]):
-                         objects[i].damage(objects[j].states[1])
-                         print "HIT!!",hitcount,i
-                         hitcount += 1
-                         objects[j].kill()
-               elif isinstance(objects[j],gameobject.character):
-                    if collision_detection(objects[j],objects[i]):
-                         objects[j].damage(objects[i].states[1])
-                         print "HIT!!",hitcount
-                         hitcount += 1
-                         objects[i].kill()
+               collision_detection(objects[i],objects[j])
 
+                        
     #オブジェクトの削除
      # objects = [x for x in objects if x.isalive()]
      for i, obj in reversed( tuple( enumerate( objects ) ) ):
@@ -81,7 +71,7 @@ def light():
     lightamb = [0,0,0,1]
     lightdiff = [1,1,1,1]
     lightspe = [1,1,1,1]
-    lightpos = [50,1,50,0]
+    lightpos = [1,1,1,0]
 
     glLightfv(GL_LIGHT0, GL_AMBIENT, lightamb)
     glLightfv(GL_LIGHT0, GL_DIFFUSE, lightdiff)
@@ -140,41 +130,109 @@ def draw2D(objects):
      glPopMatrix() #PROJECTION行列をもとに戻す
 
 
-def collision_detection(chara,obj):
-        """
-        もともとcharacterクラス内で書かれていたので、書き直す必要がある。
-        selfはcharacterのインスタンスを指します。
-        self.positionは長さ3のリストで（x座標、y座標,z座標）となります。
-        self.earthはpotが地面にめり込まないための定数です。
-        画面に表示する際はこの値だけself.positionのy座標にプラスして表示しているので、
-        当たり判定でもそこを考慮して計算する必要がある。
-        """
-        if chara.states[0] == obj.states[0]:
-             return False
-        if isinstance(obj,bullet.Bullet):
-            pot = chara.position - (0,chara.earth,0)
-            after_bullet = obj.position
-            before_bullet = obj.back()
-            
-            before_to_after = after_bullet - util.Vec(before_bullet)
-            pot_to_before = util.Vec(before_bullet) - util.Vec(pot)
-            pot_to_after = util.Vec(after_bullet) - util.Vec(pot)
-
-            if util.dot(before_to_after,-1 * pot_to_before) < 0:
-                if abs(pot_to_before) < chara.radius:
-                    return True
-                else: return False
-            elif util.dot(before_to_after,pot_to_after) < 0:
-                if abs(pot_to_after) < chara.radius:
-                    return True
-                else: return False
-            else:
-                if abs(util.cross3d(before_to_after,pot_to_before)) / abs(before_to_after) < chara.radius:
-                    return True
-                else: return False
+def collision_detection(obj1,obj2):
+     """
+     もともとcharacterクラス内で書かれていたので、書き直す必要がある。
+     selfはcharacterのインスタンスを指します。
+     self.positionは長さ3のリストで（x座標、y座標,z座標）となります。
+     self.earthはpotが地面にめり込まないための定数です。
+     画面に表示する際はこの値だけself.positionのy座標にプラスして表示しているので、
+     当たり判定でもそこを考慮して計算する必要がある。
+     """
+     if isinstance(obj1,gameobject.character):
+          if isinstance(obj2,bullet.Bullet):
+               if chara_and_bullet(obj1,obj2):
+                    obj1.damage(obj2.states[1])
+                    obj2.kill()
+          elif isinstance(obj2,gameobject.character):
+               chara_and_chara_ALL(obj1,obj2)
+          elif isinstance(obj2,mapobject.floor):
+               result =  chara_and_floor(obj1,obj2)
+               if result == 1:
+                    obj1.y_speed = 0
+                    obj1.onearth = True
+               elif result == 0:
+                    obj1.onearth = False
+               else:
+                    pass
+     elif isinstance(obj1,bullet.Bullet):
+          if isinstance(obj2,gameobject.character):
+               if chara_and_bullet(obj1,obj2):
+                    obj2.damage(obj1.states[1])
+                    obj1.kill()
+          elif isinstance(obj2,mapobject.floor):
+               if bullet_and_floor(obj1,obj2):
+                    obj1.kill()
+     elif isinstance(obj1,mapobject.floor):
+          if isinstance(obj2,gameobject.character):
+               result = chara_and_floor(obj2,obj1)
+               if result == 1:
+                    obj2.y_speed = 0
+                    obj2.onearth = True
+               elif result == 0:
+                    obj2.onearth = False
+               else:
+                    pass
+          elif isinstance(obj2,bullet.Bullet):
+               if bullet_and_floor(obj2,obj1):
+                    obj2.kill()
+                    
         
-        #if isinstance(obj,mapobject.floor):
-             #if chara.position[]
-                  
+def chara_and_bullet(chara,bullet):
+     if chara.states[0] == bullet.states[0]:
+             return False
+     pot = chara.position - (0,chara.earth,0)
+     after_bullet = bullet.position
+     before_bullet = bullet.before_position
+            
+     before_to_after = after_bullet - util.Vec(before_bullet)
+     pot_to_before = util.Vec(before_bullet) - util.Vec(pot)
+     pot_to_after = util.Vec(after_bullet) - util.Vec(pot)
 
+     if util.dot(before_to_after,-1 * pot_to_before) < 0:
+          return abs(pot_to_before) < chara.radius
+     elif util.dot(before_to_after,pot_to_after) < 0:
+          return abs(pot_to_after) < chara.radius
+     else:
+          return abs(util.cross3d(before_to_after,pot_to_before)) / abs(before_to_after) < chara.radius
 
+def chara_and_floor(chara,floor):
+     """
+     キャラクターと地面との判定
+     着地時は1を、してないときは0を、
+     そもそもxz的に平面上にないとき、または平面の下にいるとき-1を返す
+     """
+     if chara.position[0] >= floor.origin[0] and chara.position[0] < floor.origin[0] + floor.xlength and chara.position[2] >= floor.origin[2] and chara.position[2] < floor.origin[2] + floor.zlength:
+          if chara.before_position[1] >= chara.position[1]:
+               if chara.before_position[1] >= floor.height and chara.position[1] <= floor.height:
+                    chara.position += (0,floor.height - chara.position[1],0)
+                    return 1
+               else:
+                    return 0
+          else:
+               if chara.before_position[1] >= floor.height:
+                    return 0
+               elif chara.position[1] + 1.6 >= floor.height:
+                    chara.y_speed = 0
+                    chara.position += (0,floor.height - chara.position[1] -1.6,0)
+                    return -1
+               else:
+                    return -1
+                    
+     else:
+          return -1
+
+def chara_and_chara_ALL(chara1,chara2):
+     distance = abs(chara1.position - chara2.position)
+     if distance < chara1.radius + chara2.radius:
+          chara1to2 = chara2.position - chara1.position
+          chara1to2 /= abs(chara1to2)
+          movedistance = chara1.radius + chara2.radius - distance
+          
+          chara1.position -= movedistance * chara1to2
+          chara2.position += movedistance * chara1to2
+
+def bullet_and_floor(bullet,floor):
+      
+     return bullet.position[0] >= floor.origin[0] and bullet.position[0] < floor.origin[0] + floor.xlength and bullet.position[2] >= floor.origin[2] and bullet.position[2] < floor.origin[2] + floor.zlength and (bullet.position[1] + 1.2 - floor.height) * (bullet.before_position[1] + 1.2 - floor.height) <= 0
+               

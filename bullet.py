@@ -13,6 +13,7 @@ import gameobject
 class Bullet(gameobject.gameobject):
     speed = 3.0
     timelimit = 1000
+    before_position = (0,0.0000001,0)
 
     def __init__(self,position,vector,states):
         self.position = util.Vec(position)
@@ -27,6 +28,7 @@ class Bullet(gameobject.gameobject):
         glutSolidCone(0.2,1,10,10)
 
     def move(self,joy,objects):
+        self.before_position = self.position
         angle1 = cos(radians(self.vector[0]))
         angle2 = sin(radians(self.vector[0]))
         angle3 = cos(radians(self.vector[1]))
@@ -35,17 +37,6 @@ class Bullet(gameobject.gameobject):
         self.position += (angle3 * angle1 * self.speed
                           ,angle4 *  self.speed
                           , -angle3 * angle2 * self.speed) 
-
-    def back(self):
-        angle1 = cos(radians(self.vector[0]))
-        angle2 = sin(radians(self.vector[0]))
-        angle3 = cos(radians(self.vector[1]))
-        angle4 = sin(radians(self.vector[1]))
-        
-        position = self.position + (-angle3 * angle1 * self.speed
-                                     ,-angle4 * self.speed
-                                     ,angle3 * angle2 * self.speed)
-        return position
 
     def draw(self):
         if self.vector[0] > 360:

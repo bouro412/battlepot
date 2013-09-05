@@ -39,12 +39,13 @@ class normalplayer(gameobject.player):
         axis = joyinput.axis
         buttons = joyinput.buttons
         add_objects = []
-        self.before_position = copy.deepcopy(self.position)
+        gameobject.player.move(self,joyinput,objects)
 
         self.RightAxis(joyinput)
         self.LB(joyinput)
         self.slipmove()
-
+        print self.y_speed,self.onearth
+        
         if self.recovery != None:
             self.recovery[1] += -17
             self.recovery[0](self.recovery[1],self.recovery[2],
@@ -53,6 +54,7 @@ class normalplayer(gameobject.player):
             
         self.LT(joyinput)
         self.LeftAxis(joyinput)
+        self.Ajump(joyinput)
         if self.RTcounter > 0:
             self.RTshotrecharge()
         else:
@@ -233,6 +235,9 @@ class normalplayer(gameobject.player):
             self.v = self.normal_speed
             self.w = 5
             self.recovery = None
+    def Ajump(self,joyinput):
+        if joyinput.buttons[0] == 1:
+            self.jump()
 
     def LB(self,joyinput):
         Button4 = joyinput.buttons[4]
@@ -275,9 +280,7 @@ class normalplayer(gameobject.player):
         else:
             self.slip -= level_slip * self.friction / abs(level_slip)
 
-    def jump(self,joyinput):
-        pass
-
+ 
 class normalenemy(gameobject.enemy):
     normal_speed = 0.1
     dash_speed = 0.3
@@ -296,7 +299,7 @@ class normalenemy(gameobject.enemy):
         glutSolidTeapot(1)
 
     def to_player_angles(self,player_position):
-        target = player_position + (0,0.5,0)
+        target = player_position - (0,0.5,0)
         vector = util.Vec(target) - util.Vec(self.position)
         vector = vector / abs(vector)
         theta1 = asin(vector[1])
@@ -328,7 +331,7 @@ class normalenemy(gameobject.enemy):
                     self.vector[x] += -self.w
     
     def move(self,joy,objects):
-        self.before_position = copy.deepcopy(self.position)
+        gameobject.enemy.move(self,joy,objects)
         player_angle = self.to_player_angles(objects[0].position)
         self.rotate_player_direction(player_angle)
         if self.shot_counter > 0:
@@ -341,9 +344,9 @@ class normalenemy(gameobject.enemy):
     def shot_player(self,player_angle,bullet_type):
         posi = copy.deepcopy(self.position)
         vec = player_angle
-        vec[1] = -vec[1]
+        #vec[1] = -vec[1]
         posi += (1.5 * cos(radians(self.vector[0]))
-                 ,0
+                 ,0.0001
                  ,1.5 * -sin(radians(self.vector[0])))
             
         if bullet_type == 0:

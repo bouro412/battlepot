@@ -28,7 +28,7 @@ class floor(gameobject.gameobject):
                        self.origin + (0,0,self.zlength)
                        ]
 
-        color.yellow_rubber()
+        color.yellow_plastic()
         glBegin(GL_QUADS)
         glNormal3f(0,1,0)
         for x in coordinates:
