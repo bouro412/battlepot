@@ -238,15 +238,22 @@ def bullet_and_floor(bullet,floor):
                
 def chara_and_wall(chara,wall):
      chara_xzposi = util.Vec(chara.position[0],chara.position[2])
-     before_chara_xzposi = util.Vec(chara.before_position[0],chara.before_position[2])
      wall_xzbase = [util.Vec(x[0],x[2]) for x in [wall.base_point1,wall.base_point2]]
-     wall_xznormal = 
+     wall_xznormal = util.Vec(wall.normal[0],wall.normal[2])
      point1to2 = wall_xzbase[1] - wall_xzbase[0]
      point1tochara = chara_xzposi - wall_xzbase[0]
      point2tochara = chara_xzposi - wall_xzbase[1]
-     point1tobeforechara = before_chara_xzposi - wall_xzbase[0]
      
-     isarea = chara.position[1] + chara.radius >= wall.base_point1[1] and chara.position[1] - chara.radius <= wall.base_point[1] and util.dot(point1to2,point1tochara) * util.dot(point1to2,point2tochara) <= 0
+     if chara.position[1] + chara.radius >= wall.base_point1[1] and chara.position[1] - chara.radius <= wall.base_point[1] and util.dot(point1to2,point1tochara) * util.dot(point1to2,point2tochara) <= 0:
+          before_chara_xzposi = util.Vec(chara.before_position[0],chara.before_position[2])
+     
+          point1tochara = [chara_xzposi + chara.radius * wall_xznormal - wall_xzbase[0],
+                           chara_xzposi - chara.radius * wall_xznormal - wall_xzbase[0]]
+          point1tobeforechara = [before_chara_xzposi + chara.radius * wall_xznormal - wall_xzbase[0],
+                                 before_chara_xzposi - chara.radius * wall_xznormal - wall_xzbase[0]]
+          
+          #if util.dot(wall_xznormal,1tochara[0]) * util.dot(wall_xznormal,1tobefore_chara[0]) <= 0:
+               #pass
 
-     ispass = dot(wall.normal,point1tochara) * dot()
+          
      
