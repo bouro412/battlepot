@@ -44,8 +44,7 @@ class normalplayer(gameobject.player):
         self.RightAxis(joyinput)
         self.LB(joyinput)
         self.slipmove()
-        print self.y_speed,self.onearth
-        
+                
         if self.recovery != None:
             self.recovery[1] += -17
             self.recovery[0](self.recovery[1],self.recovery[2],
@@ -184,7 +183,7 @@ class normalplayer(gameobject.player):
                 self.recovery = None
                 return
 
-        if axis[0] ** 2 + axis[1] ** 2 < 0.5:
+        if axis[0] ** 2 + axis[1] ** 2 < 0.2:
             self.strate_move(1.0)
             self.vector[1] = -10
             return

@@ -236,3 +236,17 @@ def bullet_and_floor(bullet,floor):
       
      return bullet.position[0] >= floor.origin[0] and bullet.position[0] < floor.origin[0] + floor.xlength and bullet.position[2] >= floor.origin[2] and bullet.position[2] < floor.origin[2] + floor.zlength and (bullet.position[1] + 1.2 - floor.height) * (bullet.before_position[1] + 1.2 - floor.height) <= 0
                
+def chara_and_wall(chara,wall):
+     chara_xzposi = util.Vec(chara.position[0],chara.position[2])
+     before_chara_xzposi = util.Vec(chara.before_position[0],chara.before_position[2])
+     wall_xzbase = [util.Vec(x[0],x[2]) for x in [wall.base_point1,wall.base_point2]]
+     wall_xznormal = 
+     point1to2 = wall_xzbase[1] - wall_xzbase[0]
+     point1tochara = chara_xzposi - wall_xzbase[0]
+     point2tochara = chara_xzposi - wall_xzbase[1]
+     point1tobeforechara = before_chara_xzposi - wall_xzbase[0]
+     
+     isarea = chara.position[1] + chara.radius >= wall.base_point1[1] and chara.position[1] - chara.radius <= wall.base_point[1] and util.dot(point1to2,point1tochara) * util.dot(point1to2,point2tochara) <= 0
+
+     ispass = dot(wall.normal,point1tochara) * dot()
+     
