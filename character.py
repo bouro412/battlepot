@@ -17,7 +17,7 @@ import gameobject
 class normalplayer(gameobject.player):
 
     normal_speed = 0.1
-    dash_speed = 0.3
+    dash_speed = 0.5
     v = normal_speed
     w = 5
     cameralock = False
@@ -34,25 +34,25 @@ class normalplayer(gameobject.player):
         if self.colornum == 0:
             color.gold()
         glutSolidTeapot(1)
+        
 
     def move(self,joyinput,objects):
         axis = joyinput.axis
         buttons = joyinput.buttons
-        add_objects = []
         gameobject.player.move(self,joyinput,objects)
 
+        
         self.RightAxis(joyinput)
         self.LB(joyinput)
-        self.slipmove()
-                
+        self.slipmove()                
         if self.recovery != None:
             self.recovery[1] += -17
             self.recovery[0](self.recovery[1],self.recovery[2],
                              joyinput,objects)
-            return 0
-            
+            return 0           
         self.LT(joyinput)
-        self.LeftAxis(joyinput)
+        if self.onearth:
+            self.LeftAxis(joyinput)
         self.Ajump(joyinput)
         if self.RTcounter > 0:
             self.RTshotrecharge()
@@ -60,7 +60,7 @@ class normalplayer(gameobject.player):
             ob = self.RTshot(joyinput)
             if ob != None:
                 objects.append(ob)
-   
+
     def RightAxis(self,joyinput):
         Axis3 = joyinput.axis[3]
         Axis4 = joyinput.axis[4]
@@ -175,6 +175,7 @@ class normalplayer(gameobject.player):
             
 
     def LTboost(self,count,axis,joyinput,objects):
+        self.slip -= self.slip 
         if count < 0:
             if axis[2] > 0:
                 self.recovery = [self.boost_persist,1,axis]
@@ -184,7 +185,7 @@ class normalplayer(gameobject.player):
                 return
 
         if axis[0] ** 2 + axis[1] ** 2 < 0.2:
-            self.strate_move(1.0)
+            self.strate_move(self.dash_speed * 1.2)
             self.vector[1] = -10
             return
         elif axis[0] == 0:
@@ -212,30 +213,51 @@ class normalplayer(gameobject.player):
         elif LeftStickAngle < 247.5:
             self.vector = [self.camera_angle[0] + 135, -10, 0] 
 
-        self.strate_move(1.0)
+        self.strate_move(self.dash_speed * 1.2)
         
     def boost_persist(self,count,axis,joyinput,objects):
-        Axis2 = joyinput.axis[2]
+        axis = joyinput.axis
         #self.cameralock = False
-        if Axis2 > 0:
-            self.vector[1] = -10
-            self.v = self.dash_speed
-            self.w = 1
-            self.LeftAxis(joyinput)
-            if self.RTcounter > 0:
-                self.RTshotrecharge()
+        if axis[2] > 0:
+            if axis[0] ** 2 + axis[1] ** 2 > 0.1:
+                self.vector[1] = -10
+                self.v = self.dash_speed
+                self.w = 1
+                self.LeftAxis(joyinput)
+                if self.RTcounter > 0:
+                    self.RTshotrecharge()
+                else:
+                    ob = self.RTshot(joyinput)
+                    if ob != None:
+                        objects.append(ob)
             else:
-                ob = self.RTshot(joyinput)
-                if ob != None:
-                    objects.append(ob)
+                self.strate_move(self.dash_speed)
+                if self.RTcounter > 0:
+                    self.RTshotrecharge()
+                else:
+                    ob = self.RTshot(joyinput)
+                    if ob != None:
+                        objects.append(ob)
             
         else:
             self.vector[1] = 0
             self.v = self.normal_speed
             self.w = 5
             self.recovery = None
+    
+    def boostoff(self,count,vector,joyinput,objects):
+        if count == 200:
+            self.slip = vector
+        
+        
+        
     def Ajump(self,joyinput):
+        self.recovery = None
+        if self.y_speed > 1.0 / 60:
+            return
         if joyinput.buttons[0] == 1:
+            self.slip = self.position - self.before_position
+            self.slip -= (0,self.slip[1],0)
             self.jump()
 
     def LB(self,joyinput):
@@ -273,11 +295,12 @@ class normalplayer(gameobject.player):
                 self.RTcounter = 0
     def slipmove(self):
         self.position += self.slip
-        level_slip = util.Vec(self.slip[0],0,self.slip[2])
-        if abs(level_slip) < self.friction:
-            self.slip -= level_slip
-        else:
-            self.slip -= level_slip * self.friction / abs(level_slip)
+        if self.onearth:
+            level_slip = util.Vec(self.slip[0],0,self.slip[2])
+            if abs(level_slip) < self.friction:
+                self.slip -= level_slip
+            else:
+                self.slip -= level_slip * self.friction / abs(level_slip)
 
  
 class normalenemy(gameobject.enemy):

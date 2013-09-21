@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 
 """
-メインルーチンはこの中のdraw関数で定義されている。
+メインルーチンはこの中のstep関数で定義されている。
 step内のやりとりはこの中で別の関数にまとめたい。
 """
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
-from math import *
+import copy
+from math import sqrt
 import color
 import gameobject
 import character
@@ -50,14 +51,14 @@ def step(objects,joy):
      for ob in objects:
           ob.draw()
 
-     color.yellow_plastic()
+     """color.yellow_plastic()
      glBegin(GL_QUADS)
      glNormal3f(0,1,0)
      glVertex3f(0,0,0)
      glVertex3f(100,0,0)
      glVertex3f(100,0,100)
      glVertex3f(0,0,100)
-     glEnd()
+     glEnd()"""
 
      draw2D(objects)
           
@@ -155,6 +156,8 @@ def collision_detection(obj1,obj2):
                     obj1.onearth = False
                else:
                     pass
+          elif isinstance(obj2,mapobject.wall):
+               chara_and_wall_ALL(obj1,obj2)
      elif isinstance(obj1,bullet.Bullet):
           if isinstance(obj2,gameobject.character):
                if chara_and_bullet(obj1,obj2):
@@ -162,6 +165,9 @@ def collision_detection(obj1,obj2):
                     obj1.kill()
           elif isinstance(obj2,mapobject.floor):
                if bullet_and_floor(obj1,obj2):
+                    obj1.kill()
+          elif isinstance(obj2,mapobject.wall):
+               if bullet_and_wall(obj1,obj2):
                     obj1.kill()
      elif isinstance(obj1,mapobject.floor):
           if isinstance(obj2,gameobject.character):
@@ -176,7 +182,12 @@ def collision_detection(obj1,obj2):
           elif isinstance(obj2,bullet.Bullet):
                if bullet_and_floor(obj2,obj1):
                     obj2.kill()
-                    
+     elif isinstance(obj1,mapobject.wall):
+          if isinstance(obj2,gameobject.character):
+               chara_and_wall_ALL(obj2,obj1)
+          elif isinstance(obj2,bullet.Bullet):
+               if bullet_and_wall(obj2,obj1):
+                    obj2.kill()
         
 def chara_and_bullet(chara,bullet):
      if chara.states[0] == bullet.states[0]:
@@ -236,7 +247,7 @@ def bullet_and_floor(bullet,floor):
       
      return bullet.position[0] >= floor.origin[0] and bullet.position[0] < floor.origin[0] + floor.xlength and bullet.position[2] >= floor.origin[2] and bullet.position[2] < floor.origin[2] + floor.zlength and (bullet.position[1] + 1.2 - floor.height) * (bullet.before_position[1] + 1.2 - floor.height) <= 0
                
-def chara_and_wall(chara,wall):
+def chara_and_wall_ALL(chara,wall):
      chara_xzposi = util.Vec(chara.position[0],chara.position[2])
      wall_xzbase = [util.Vec(x[0],x[2]) for x in [wall.base_point1,wall.base_point2]]
      wall_xznormal = util.Vec(wall.normal[0],wall.normal[2])
@@ -244,16 +255,41 @@ def chara_and_wall(chara,wall):
      point1tochara = chara_xzposi - wall_xzbase[0]
      point2tochara = chara_xzposi - wall_xzbase[1]
      
-     if chara.position[1] + chara.radius >= wall.base_point1[1] and chara.position[1] - chara.radius <= wall.base_point[1] and util.dot(point1to2,point1tochara) * util.dot(point1to2,point2tochara) <= 0:
+     if chara.position[1] + chara.radius >= wall.base_point1[1] and chara.position[1] - chara.radius <= wall.base_point1[1] + wall.height and util.dot(point1to2,point1tochara) * util.dot(point1to2,point2tochara) <= 0:
           before_chara_xzposi = util.Vec(chara.before_position[0],chara.before_position[2])
      
           point1tochara = [chara_xzposi + chara.radius * wall_xznormal - wall_xzbase[0],
-                           chara_xzposi - chara.radius * wall_xznormal - wall_xzbase[0]]
+                           chara_xzposi - chara.radius * wall_xznormal - wall_xzbase[0],
+                           chara_xzposi - wall_xzbase[0]]
           point1tobeforechara = [before_chara_xzposi + chara.radius * wall_xznormal - wall_xzbase[0],
-                                 before_chara_xzposi - chara.radius * wall_xznormal - wall_xzbase[0]]
+                                 before_chara_xzposi - chara.radius * wall_xznormal - wall_xzbase[0],
+                                 before_chara_xzposi - wall_xzbase[0]]
           
-          #if util.dot(wall_xznormal,1tochara[0]) * util.dot(wall_xznormal,1tobefore_chara[0]) <= 0:
-               #pass
+          if util.dot(wall_xznormal,point1tochara[0]) * util.dot(wall_xznormal,point1tobeforechara[0]) <= 0 or util.dot(wall_xznormal,point1tochara[1]) * util.dot(wall_xznormal,point1tobeforechara[1]) <= 0:
+               distance = sqrt((abs(point1tochara[2])) ** 2 - (util.dot(point1to2,point1tochara[2]) / abs(point1to2)) ** 2)
+               print distance
+               if util.dot(wall_xznormal,point1tobeforechara[2]) >= 0:
+                    if util.dot(wall_xznormal,point1tochara[2]) >= 0:
+                         chara.position += 1.01 * (chara.radius - distance) * wall.normal
+                    else:
+                         chara.position += 1.01 * (chara.radius + distance) * wall.normal
+               else:
+                    if util.dot(wall_xznormal,point1tochara[2]) >= 0:
+                         chara.position -= 1.01 * (chara.radius + distance) * wall.normal
+                    else:
+                         chara.position -= 1.01 * (chara.radius - distance) * wall.normal
+
+def bullet_and_wall(bullet,wall):
+     bullet_xzposi = util.Vec(bullet.position[0],bullet.position[2])
+     wall_xzbase = [util.Vec(x[0],x[2]) for x in [wall.base_point1,wall.base_point2]]
+     wall_xznormal = util.Vec(wall.normal[0],wall.normal[2])
+     point1to2 = wall_xzbase[1] - wall_xzbase[0]
+     point1tobullet = bullet_xzposi - wall_xzbase[0]
+     point2tobullet = bullet_xzposi - wall_xzbase[1]
+     point1tobeforebullet = util.Vec(bullet.before_position[0],bullet.before_position[2]) - wall_xzbase[0]
+
+     return bullet.position[1] >= wall.base_point1[1] -1.2 and bullet.position[1] <= wall.base_point1[1] + wall.height - 1.2 and util.dot(point1to2,point1tobullet) * util.dot(point1to2,point2tobullet) <= 0 and util.dot(wall_xznormal,point1tobullet) * util.dot(wall_xznormal,point1tobeforebullet) <= 0
+               
 
           
      

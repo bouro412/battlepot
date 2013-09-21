@@ -13,12 +13,13 @@ import gameobject
 class Bullet(gameobject.gameobject):
     speed = 3.0
     timelimit = 1000
-    before_position = (0,0.0000001,0)
+    
 
     def __init__(self,position,vector,states):
         self.position = util.Vec(position)
         self.vector = vector
         self.states = states
+        self.before_position = util.Vec(position) - (0,0,0.0000001)
         #statesは[ID,damage]のリスト
     
     def visual(self):
