@@ -39,7 +39,8 @@ def step(objects,joy):
      for i in range(len(objects)-1):
           for j in range(i+1,len(objects)):
                collision_detection(objects[i],objects[j])
-
+               #if i == 0:
+                    #print objects[i].y_speed
                         
     #オブジェクトの削除
      # objects = [x for x in objects if x.isalive()]
@@ -114,6 +115,23 @@ def draw2D(objects):
      glVertex2f(10 +playerHP * 39,460)
      glEnd()
 
+     glBegin(GL_QUADS)
+     glColor(0,0,0,1)
+     glVertex2f(220,10)
+     glVertex2f(220,40)
+     glVertex2f(420,40)
+     glVertex2f(420,10)
+     glEnd()
+
+     player_boost = objects[0].boost_power
+     glBegin(GL_QUADS)
+     glColor(0,1,1,0)
+     glVertex2f(220,10)
+     glVertex2f(220,40)
+     glVertex2f(220 + player_boost * 2.0,40)
+     glVertex2f(220 + player_boost * 2.0,10)
+     glEnd()
+
      glBegin(GL_LINES)
      glColor(1,1,1,1)
      glVertex2f(320,230)
@@ -150,7 +168,8 @@ def collision_detection(obj1,obj2):
           elif isinstance(obj2,mapobject.floor):
                result =  chara_and_floor(obj1,obj2)
                if result == 1:
-                    obj1.y_speed = 0
+                    if obj1.y_speed < 0:
+                         obj1.y_speed = 0
                     obj1.onearth = True
                elif result == 0:
                     obj1.onearth = False
@@ -173,7 +192,8 @@ def collision_detection(obj1,obj2):
           if isinstance(obj2,gameobject.character):
                result = chara_and_floor(obj2,obj1)
                if result == 1:
-                    obj2.y_speed = 0
+                    if obj2.y_speed < 0:
+                         obj2.y_speed = 0
                     obj2.onearth = True
                elif result == 0:
                     obj2.onearth = False
@@ -267,7 +287,6 @@ def chara_and_wall_ALL(chara,wall):
           
           if util.dot(wall_xznormal,point1tochara[0]) * util.dot(wall_xznormal,point1tobeforechara[0]) <= 0 or util.dot(wall_xznormal,point1tochara[1]) * util.dot(wall_xznormal,point1tobeforechara[1]) <= 0:
                distance = sqrt((abs(point1tochara[2])) ** 2 - (util.dot(point1to2,point1tochara[2]) / abs(point1to2)) ** 2)
-               print distance
                if util.dot(wall_xznormal,point1tobeforechara[2]) >= 0:
                     if util.dot(wall_xznormal,point1tochara[2]) >= 0:
                          chara.position += 1.01 * (chara.radius - distance) * wall.normal

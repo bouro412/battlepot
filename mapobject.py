@@ -57,7 +57,7 @@ class wall(gameobject.gameobject):
                        ,self.base_point2 + (0,self.height,0)
                        ,self.base_point2)
 
-        color.yellow_plastic()
+        color.green()
         glBegin(GL_QUADS)
         glNormal3fv(self.normal)
         for x in coordinates:

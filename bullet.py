@@ -98,3 +98,6 @@ class guided_bullet(Bullet):
         self.guidance(objects[0])
         Bullet.move(self,joy,objects)
         
+
+class fast_bullet(Bullet):
+    speed = Bullet.speed * 2

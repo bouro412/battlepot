@@ -29,9 +29,12 @@ class character(gameobject):
     earth = 0.75
     radius = 0.8
     onearth = True
+    before_onearth = True
     y_speed = 0
     fallspeed_limit = -20.0 / 60
     before_position = util.Vec(0,0,0)
+    recovery = None
+
     def __init__(self,colornum,position,vector
                  ,states,camera_angle = [0,0]):
         self.colornum = colornum
@@ -49,6 +52,9 @@ class character(gameobject):
         else:
             self.position += (0,self.fallspeed_limit,0)
         self.gravity()
+        if not self.before_onearth and self.onearth and self.recovery == None:
+            self.recovery = [self.landing,200,1]
+        self.before_onearth = self.onearth
         
     def draw(self):
         if self.vector[0] > 360:
@@ -96,6 +102,9 @@ class character(gameobject):
     def jump(self):
         self.y_speed = 20.0 / 60
         self.position += (0,20.0/60,0)
+    def landing(self,count,no_use,joyinput,objects):
+        if count < 0:
+            self.recovery = None
         
 class player(character):
     def draw(self):
@@ -130,7 +139,12 @@ class enemy(character):
         pass
     def rotate(self,x,y):
         self.vector = [self.vector[0] + x,self.vector[1] + y]
-
+    def move(self,joy,objects):
+        character.move(self,joy,objects)
+        if self.states[1] <= 0:
+            self.kill()
+        
 
     
 
+        

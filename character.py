@@ -28,18 +28,31 @@ class normalplayer(gameobject.player):
     recovery = None
     radius = 0.8
     slip = util.Vec(0,0,0) 
-    friction = 0.01
+    friction = 0.03
+    air_friction = 0.01
+    jumpon = False
+    boost_power = 100.0
+    boost_recovery = 100.0 / 180.0
+    
     
     def visual(self):
         if self.colornum == 0:
             color.gold()
         glutSolidTeapot(1)
         
+        position = util.Vec(self.position[0],self.position[2])
+        before_position = util.Vec(self.before_position[0],self.before_position[2])
+    
+        print self.slip
 
     def move(self,joyinput,objects):
         axis = joyinput.axis
         buttons = joyinput.buttons
         gameobject.player.move(self,joyinput,objects)
+        if self.boost_power < 100:
+            self.boost_power += self.boost_recovery
+            if self.boost_power > 100:
+                self.boost_power = 100
 
         
         self.RightAxis(joyinput)
@@ -51,7 +64,7 @@ class normalplayer(gameobject.player):
                              joyinput,objects)
             return 0           
         self.LT(joyinput)
-        if self.onearth:
+        if self.onearth or self.jumpon:
             self.LeftAxis(joyinput)
         self.Ajump(joyinput)
         if self.RTcounter > 0:
@@ -137,7 +150,9 @@ class normalplayer(gameobject.player):
         axis = joyinput.axis
         if axis[2] > 0:
             if self.cameralock:
-                self.recovery = [self.LTstep,300,copy.deepcopy(axis)]
+                if self.boost_power >= 25:
+                    self.boost_power -= 25
+                    self.recovery = [self.LTstep,400,copy.deepcopy(axis)]
             else:
                 self.recovery = [self.LTboost,300,copy.deepcopy(axis)]
             
@@ -152,8 +167,10 @@ class normalplayer(gameobject.player):
             self.w = 5
             """
     def LTstep(self,count,axis,joyinput,objects):
-        if count > 0:
-            v = (count / 150) ** 2 + 0.15 
+        self.slip -= self.slip
+        self.boost_power -= self.boost_recovery
+        if count >= 100:
+            v = ((count - 100)/ 150) ** 2 + 0.15 
             if axis[1] < -0.5:
                 self.vector[1] = -10
                 self.strate_move(v)
@@ -168,97 +185,119 @@ class normalplayer(gameobject.player):
                 self.vector[2] = 10
             else:
                 self.recovery = None
-        else:
-            self.recovery = None
+        elif count > 0:
             self.vector[1] = 0
             self.vector[2] = 0
+        else:
+            self.recovery = None
             
 
     def LTboost(self,count,axis,joyinput,objects):
+        if self.boost_power >= 200.0 /180:
+            self.boost_power -= 200.0 / 180
+        else:
+            count = 0
         self.slip -= self.slip 
-        if count < 0:
-            if axis[2] > 0:
-                self.recovery = [self.boost_persist,1,axis]
-            else:
-                self.vector[1] = 0
-                self.recovery = None
-                return
-
+    
         if axis[0] ** 2 + axis[1] ** 2 < 0.2:
             self.strate_move(self.dash_speed * 1.2)
             self.vector[1] = -10
-            return
-        elif axis[0] == 0:
-            LeftStickAngle = 90 * (-axis[1] / fabs(axis[1]))
+            
         else:
-            LeftStickAngle = degrees(atan(-axis[1] / axis[0]))
-        if axis[0] < 0:
-            LeftStickAngle += 180
+            if axis[0] == 0:
+                LeftStickAngle = 90 * (-axis[1] / fabs(axis[1]))
+            else:
+                LeftStickAngle = degrees(atan(-axis[1] / axis[0]))
+            if axis[0] < 0:
+                LeftStickAngle += 180
 
             
-        if LeftStickAngle < -67.5 or LeftStickAngle > 247.5:
-            self.vector = [self.camera_angle[0] + 180, -10, 0]
-        elif LeftStickAngle < -22.5:
-            self.vector = [self.camera_angle[0] - 135, -10, 0]
-        elif LeftStickAngle < 22.5:
-            self.vector = [self.camera_angle[0] - 90, -10, 0]
-        elif LeftStickAngle < 67.5:
-            self.vector = [self.camera_angle[0] - 45, -10 ,0]
-        elif LeftStickAngle < 112.5:
-            self.vector = [self.camera_angle[0] , -10, 0]
-        elif LeftStickAngle < 157.5:
-            self.vector = [self.camera_angle[0] + 45, -10, 0]
-        elif LeftStickAngle < 202.5:
-            self.vector = [self.camera_angle[0] +90, -10, 0]
-        elif LeftStickAngle < 247.5:
-            self.vector = [self.camera_angle[0] + 135, -10, 0] 
+            if LeftStickAngle < -67.5 or LeftStickAngle > 247.5:
+                self.vector = [self.camera_angle[0] + 180, -10, 0]
+            elif LeftStickAngle < -22.5:
+                self.vector = [self.camera_angle[0] - 135, -10, 0]
+            elif LeftStickAngle < 22.5:
+                self.vector = [self.camera_angle[0] - 90, -10, 0]
+            elif LeftStickAngle < 67.5:
+                self.vector = [self.camera_angle[0] - 45, -10 ,0]
+            elif LeftStickAngle < 112.5:
+                self.vector = [self.camera_angle[0] , -10, 0]
+            elif LeftStickAngle < 157.5:
+                self.vector = [self.camera_angle[0] + 45, -10, 0]
+            elif LeftStickAngle < 202.5:
+                self.vector = [self.camera_angle[0] +90, -10, 0]
+            elif LeftStickAngle < 247.5:
+                self.vector = [self.camera_angle[0] + 135, -10, 0] 
 
-        self.strate_move(self.dash_speed * 1.2)
-        
+            self.strate_move(self.dash_speed * 1.2)
+            
+        if count < 0:
+            if joyinput.axis[2] > 0:
+                self.recovery = [self.boost_persist,1,axis]
+            else:
+                self.vector[1] = 0
+                vector = self.position - self.before_position
+                vector -= (0,vector[1],0)
+                self.recovery = [self.boostoff,300,vector]
+                return
+            
     def boost_persist(self,count,axis,joyinput,objects):
         axis = joyinput.axis
-        #self.cameralock = False
-        if axis[2] > 0:
-            if axis[0] ** 2 + axis[1] ** 2 > 0.1:
-                self.vector[1] = -10
-                self.v = self.dash_speed
-                self.w = 1
-                self.LeftAxis(joyinput)
-                if self.RTcounter > 0:
-                    self.RTshotrecharge()
-                else:
-                    ob = self.RTshot(joyinput)
-                    if ob != None:
-                        objects.append(ob)
-            else:
-                self.strate_move(self.dash_speed)
-                if self.RTcounter > 0:
-                    self.RTshotrecharge()
-                else:
-                    ob = self.RTshot(joyinput)
-                    if ob != None:
-                        objects.append(ob)
-            
+        if self.boost_power >= 200.0 / 180:
+            self.boost_power -= 200.0 / 180
         else:
+            axis[2] = 0
+
+        #self.cameralock = False
+        if axis[0] ** 2 + axis[1] ** 2 > 0.1:
+            self.vector[1] = -10
+            self.v = self.dash_speed
+            self.w = 1
+            self.LeftAxis(joyinput)
+            if self.RTcounter > 0:
+                self.RTshotrecharge()
+            else:
+                ob = self.RTshot(joyinput)
+                if ob != None:
+                    objects.append(ob)
+        else:
+            self.strate_move(self.dash_speed)
+            if self.RTcounter > 0:
+                self.RTshotrecharge()
+            else:
+                ob = self.RTshot(joyinput)
+                if ob != None:
+                    objects.append(ob)
+            
+        self.Ajump(joyinput)
+        if axis[2] <= 0:
             self.vector[1] = 0
             self.v = self.normal_speed
             self.w = 5
-            self.recovery = None
+            vector = self.position - self.before_position
+            vector -= (0,vector[1],0)
+            self.recovery = [self.boostoff,300,vector]
     
     def boostoff(self,count,vector,joyinput,objects):
-        if count == 200:
+        if count == 300 - 17:
             self.slip = vector
-        
-        
+        elif count <= 0:
+            self.recovery = None
+        else:
+            pass
+        self.Ajump(joyinput)
         
     def Ajump(self,joyinput):
-        self.recovery = None
-        if self.y_speed > 1.0 / 60:
-            return
-        if joyinput.buttons[0] == 1:
-            self.slip = self.position - self.before_position
-            self.slip -= (0,self.slip[1],0)
-            self.jump()
+        if joyinput.buttons[0] == 1 and self.boost_power >= 200.0 / 180:
+            self.jumpon = True
+        elif joyinput.buttons[0] == -1 or self.boost_power < 200.0 / 180:
+            self.jumpon = False
+        if self.jumpon:
+            self.boost_power -= 200.0 / 180
+            if self.y_speed < 20.0 / 60:
+                self.y_speed += 2.0 / 60
+
+
 
     def LB(self,joyinput):
         Button4 = joyinput.buttons[4]
@@ -294,6 +333,7 @@ class normalplayer(gameobject.player):
             if self.RTcounter >= 300:
                 self.RTcounter = 0
     def slipmove(self):
+        self.slip -= (0,self.slip[1],0)
         self.position += self.slip
         if self.onearth:
             level_slip = util.Vec(self.slip[0],0,self.slip[2])
@@ -301,6 +341,14 @@ class normalplayer(gameobject.player):
                 self.slip -= level_slip
             else:
                 self.slip -= level_slip * self.friction / abs(level_slip)
+        else:
+            level_slip = util.Vec(self.slip[0],0,self.slip[2])
+            self.slip -= level_slip * self.air_friction
+
+    def landing(self,count,no_use,joyinput,objects):
+        self.RightAxis(joyinput)
+        gameobject.player.landing(self,count,no_use,joyinput,objects)
+
 
  
 class normalenemy(gameobject.enemy):
@@ -319,6 +367,25 @@ class normalenemy(gameobject.enemy):
         elif self.colornum == 1:
             color.ruby()
         glutSolidTeapot(1)
+
+    def AI_fixed_artillery(self,joy,objects,bullet_type):
+        player_angle = self.to_player_angles(objects[0].position)
+        self.rotate_player_direction(player_angle)
+        if self.shot_counter > 0:
+            self.shot_recharge()
+        else:
+            if bullet_type == 0:
+                ob = self.shot_player(player_angle,0)
+            if bullet_type == 1:
+                ob = self.shot_player(player_angle,1)
+            if bullet_type == 2:
+                ob = self.shot_player(player_angle,2)
+            if bullet_type == 3:
+                ob = self.hensa_shot(objects)
+            if ob != 0:
+                objects.append(ob)
+
+        
 
     def to_player_angles(self,player_position):
         target = player_position - (0,0.5,0)
@@ -351,17 +418,11 @@ class normalenemy(gameobject.enemy):
                     self.vector[x] += self.w
                 else:
                     self.vector[x] += -self.w
+
     
     def move(self,joy,objects):
         gameobject.enemy.move(self,joy,objects)
-        player_angle = self.to_player_angles(objects[0].position)
-        self.rotate_player_direction(player_angle)
-        if self.shot_counter > 0:
-            self.shot_recharge()
-        else:
-            ob = self.hensa_shot(objects)
-            if ob != 0:
-                objects.append(ob)
+        self.AI_fixed_artillery(joy,objects,self.states[2])
 
     def shot_player(self,player_angle,bullet_type):
         posi = copy.deepcopy(self.position)
@@ -373,8 +434,11 @@ class normalenemy(gameobject.enemy):
             
         if bullet_type == 0:
             result = bullet.Bullet(posi,vec,[self.states[0],1])
-        if bullet_type == 1:
+        elif bullet_type == 1:
             result = bullet.guided_bullet(posi, vec,[self.states[0],1])
+        elif bullet_type == 2:
+            result = bullet.fast_bullet(posi,vec,[self.states[0],1])
+            
         self.shot_recharge()
         return result
 
