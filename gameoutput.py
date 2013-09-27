@@ -233,7 +233,7 @@ def chara_and_floor(chara,floor):
      着地時は1を、してないときは0を、
      そもそもxz的に平面上にないとき、または平面の下にいるとき-1を返す
      """
-     if chara.position[0] >= floor.origin[0] and chara.position[0] < floor.origin[0] + floor.xlength and chara.position[2] >= floor.origin[2] and chara.position[2] < floor.origin[2] + floor.zlength:
+     if chara.position[0] + chara.radius >= floor.origin[0] and chara.position[0] - chara.radius < floor.origin[0] + floor.xlength and chara.position[2] + chara.radius >= floor.origin[2] and chara.position[2] - chara.radius < floor.origin[2] + floor.zlength:
           if chara.before_position[1] >= chara.position[1]:
                if chara.before_position[1] >= floor.height and chara.position[1] <= floor.height:
                     chara.position += (0,floor.height - chara.position[1],0)
@@ -254,8 +254,8 @@ def chara_and_floor(chara,floor):
           return -1
 
 def chara_and_chara_ALL(chara1,chara2):
-     distance = abs(chara1.position - chara2.position)
-     if distance < chara1.radius + chara2.radius:
+      distance = abs(chara1.position - chara2.position)
+      if distance < chara1.radius + chara2.radius:
           chara1to2 = chara2.position - chara1.position
           chara1to2 /= abs(chara1to2)
           movedistance = chara1.radius + chara2.radius - distance
@@ -275,7 +275,7 @@ def chara_and_wall_ALL(chara,wall):
      point1tochara = chara_xzposi - wall_xzbase[0]
      point2tochara = chara_xzposi - wall_xzbase[1]
      
-     if chara.position[1] + chara.radius >= wall.base_point1[1] and chara.position[1] - chara.radius <= wall.base_point1[1] + wall.height and util.dot(point1to2,point1tochara) * util.dot(point1to2,point2tochara) <= 0:
+     if chara.position[1] + chara.radius * 2 >= wall.base_point1[1] and chara.position[1] < wall.base_point1[1] + wall.height and util.dot(point1to2,point1tochara) * util.dot(point1to2,point2tochara) <= 0:
           before_chara_xzposi = util.Vec(chara.before_position[0],chara.before_position[2])
      
           point1tochara = [chara_xzposi + chara.radius * wall_xznormal - wall_xzbase[0],

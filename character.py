@@ -32,7 +32,7 @@ class normalplayer(gameobject.player):
     air_friction = 0.01
     jumpon = False
     boost_power = 100.0
-    boost_recovery = 100.0 / 180.0
+    boost_recovery = 75.0 / 180.0
     
     
     def visual(self):
@@ -150,8 +150,8 @@ class normalplayer(gameobject.player):
         axis = joyinput.axis
         if axis[2] > 0:
             if self.cameralock:
-                if self.boost_power >= 25:
-                    self.boost_power -= 25
+                if self.boost_power >= 25 and (abs(axis[0]) > 0.5 or abs(axis[1]) > 0.5):
+                    self.boost_power -= 25        
                     self.recovery = [self.LTstep,400,copy.deepcopy(axis)]
             else:
                 self.recovery = [self.LTboost,300,copy.deepcopy(axis)]
@@ -168,7 +168,6 @@ class normalplayer(gameobject.player):
             """
     def LTstep(self,count,axis,joyinput,objects):
         self.slip -= self.slip
-        self.boost_power -= self.boost_recovery
         if count >= 100:
             v = ((count - 100)/ 150) ** 2 + 0.15 
             if axis[1] < -0.5:
@@ -184,6 +183,7 @@ class normalplayer(gameobject.player):
                 self.side_move(-v)
                 self.vector[2] = 10
             else:
+                self.boost_power += 25
                 self.recovery = None
         elif count > 0:
             self.vector[1] = 0
