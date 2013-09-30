@@ -7,6 +7,7 @@ import color
 import util
 
 class gameobject:
+    __drawcancel = False
     __alive = True
     def draw(self):
         pass
@@ -107,6 +108,8 @@ class character(gameobject):
             self.recovery = None
         
 class player(character):
+    camera_position = util.Vec(0,0,0)
+    
     def draw(self):
         self.camera()
         character.draw(self)
@@ -120,15 +123,16 @@ class player(character):
         y = self.position[1] + eye
         z = self.position[2]
         glLoadIdentity()
-        camera_position = [x - distance * cos(radians(angle[0]))*fai ,
-                           y + distance * sin(radians(angle[1])) ,
-                           z + distance * sin(radians(angle[0]))*fai]
-        camera_vector = [x - camera_position[0],
-                         y - camera_position[1],
-                         z - camera_position[2]]
-        gluLookAt(camera_position[0],
-                  camera_position[1],
-                  camera_position[2],
+        self.camera_position = util.Vec(
+            [x - distance * cos(radians(angle[0]))*fai ,
+             y + distance * sin(radians(angle[1])) ,
+             z + distance * sin(radians(angle[0]))*fai])
+        camera_vector = [x - self.camera_position[0],
+                         y - self.camera_position[1],
+                         z - self.camera_position[2]]
+        gluLookAt(self.camera_position[0],
+                  self.camera_position[1],
+                  self.camera_position[2],
                   x,y,z,
                   0,1,0)
 

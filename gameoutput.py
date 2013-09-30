@@ -233,6 +233,9 @@ def chara_and_floor(chara,floor):
      着地時は1を、してないときは0を、
      そもそもxz的に平面上にないとき、または平面の下にいるとき-1を返す
      """
+     if isinstance(chara,gameobject.player):
+          camera_and_floor_ALL(chara,floor)
+
      if chara.position[0] + chara.radius >= floor.origin[0] and chara.position[0] - chara.radius < floor.origin[0] + floor.xlength and chara.position[2] + chara.radius >= floor.origin[2] and chara.position[2] - chara.radius < floor.origin[2] + floor.zlength:
           if chara.before_position[1] >= chara.position[1]:
                if chara.before_position[1] >= floor.height and chara.position[1] <= floor.height:
@@ -286,17 +289,18 @@ def chara_and_wall_ALL(chara,wall):
                                  before_chara_xzposi - wall_xzbase[0]]
           
           if util.dot(wall_xznormal,point1tochara[0]) * util.dot(wall_xznormal,point1tobeforechara[0]) <= 0 or util.dot(wall_xznormal,point1tochara[1]) * util.dot(wall_xznormal,point1tobeforechara[1]) <= 0:
+               print "wall"
                distance = sqrt((abs(point1tochara[2])) ** 2 - (util.dot(point1to2,point1tochara[2]) / abs(point1to2)) ** 2)
                if util.dot(wall_xznormal,point1tobeforechara[2]) >= 0:
                     if util.dot(wall_xznormal,point1tochara[2]) >= 0:
-                         chara.position += 1.01 * (chara.radius - distance) * wall.normal
+                         chara.position += 1.1 * (chara.radius - distance) * wall.normal
                     else:
-                         chara.position += 1.01 * (chara.radius + distance) * wall.normal
+                         chara.position += 1.1 * (chara.radius + distance) * wall.normal
                else:
                     if util.dot(wall_xznormal,point1tochara[2]) >= 0:
-                         chara.position -= 1.01 * (chara.radius + distance) * wall.normal
+                         chara.position -= 1.1 * (chara.radius + distance) * wall.normal
                     else:
-                         chara.position -= 1.01 * (chara.radius - distance) * wall.normal
+                         chara.position -= 1.1 * (chara.radius - distance) * wall.normal
 
 def bullet_and_wall(bullet,wall):
      bullet_xzposi = util.Vec(bullet.position[0],bullet.position[2])
@@ -309,6 +313,7 @@ def bullet_and_wall(bullet,wall):
 
      return bullet.position[1] >= wall.base_point1[1] -1.2 and bullet.position[1] <= wall.base_point1[1] + wall.height - 1.2 and util.dot(point1to2,point1tobullet) * util.dot(point1to2,point2tobullet) <= 0 and util.dot(wall_xznormal,point1tobullet) * util.dot(wall_xznormal,point1tobeforebullet) <= 0
                
-
-          
+def camera_and_floor_ALL(chara,floor):
+     if chara.position[0] + chara.radius >= floor.origin[0] and chara.position[0] - chara.radius < floor.origin[0] + floor.xlength and chara.position[2] + chara.radius >= floor.origin[2] and chara.position[2] - chara.radius < floor.origin[2] + floor.zlength and (chara.position[1] + chara.radius - floor.height) * (chara.camera_position[1] - floor.height) < 0:
+          floor.draw_cancel = True
      

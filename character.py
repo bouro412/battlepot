@@ -40,10 +40,6 @@ class normalplayer(gameobject.player):
             color.gold()
         glutSolidTeapot(1)
         
-        position = util.Vec(self.position[0],self.position[2])
-        before_position = util.Vec(self.before_position[0],self.before_position[2])
-    
-        print self.slip
 
     def move(self,joyinput,objects):
         axis = joyinput.axis
