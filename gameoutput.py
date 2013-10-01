@@ -279,6 +279,8 @@ def chara_and_wall_ALL(chara,wall):
      point2tochara = chara_xzposi - wall_xzbase[1]
      
      if chara.position[1] + chara.radius * 2 >= wall.base_point1[1] and chara.position[1] < wall.base_point1[1] + wall.height and util.dot(point1to2,point1tochara) * util.dot(point1to2,point2tochara) <= 0:
+          if isinstance(chara,gameobject.player):
+               camera_and_wall_ALL(chara,wall)
           before_chara_xzposi = util.Vec(chara.before_position[0],chara.before_position[2])
      
           point1tochara = [chara_xzposi + chara.radius * wall_xznormal - wall_xzbase[0],
@@ -317,3 +319,9 @@ def camera_and_floor_ALL(chara,floor):
      if chara.position[0] + chara.radius >= floor.origin[0] and chara.position[0] - chara.radius < floor.origin[0] + floor.xlength and chara.position[2] + chara.radius >= floor.origin[2] and chara.position[2] - chara.radius < floor.origin[2] + floor.zlength and (chara.position[1] + chara.radius - floor.height) * (chara.camera_position[1] - floor.height) < 0:
           floor.draw_cancel = True
      
+def camera_and_wall_ALL(chara,wall):
+     wall_to_chara = chara.position - wall.base_point1
+     wall_to_camera = chara.camera_position - wall.base_point1
+
+     if util.dot(wall.normal,wall_to_chara) * util.dot(wall.normal,wall_to_camera) <= 0:
+          wall.draw_cancel = True

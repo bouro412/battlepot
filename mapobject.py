@@ -60,7 +60,7 @@ class wall(gameobject.gameobject):
         
     def draw(self):
         if self.draw_cancel:
-            self.draw_cancel = True
+            self.draw_cancel = False
         else:
             coordinates = (self.base_point1
                            ,self.base_point1 + (0,self.height,0)
