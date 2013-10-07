@@ -32,7 +32,7 @@ class character(gameobject):
     onearth = True
     before_onearth = True
     y_speed = 0
-    fallspeed_limit = -20.0 / 60
+    fallspeed_limit = -30.0 / 60
     before_position = util.Vec(0,0,0)
     recovery = None
 
@@ -54,7 +54,7 @@ class character(gameobject):
             self.position += (0,self.fallspeed_limit,0)
         self.gravity()
         if not self.before_onearth and self.onearth and self.recovery == None:
-            self.recovery = [self.landing,200,1]
+            self.recovery = [self.landing,100,1]
         self.before_onearth = self.onearth
         
     def draw(self):
@@ -99,7 +99,7 @@ class character(gameobject):
             self.states[1] -= damage
     def gravity(self):
         if not self.onearth:
-            self.y_speed -= 40.0 / 3600
+            self.y_speed -= 60.0 / 3600
     def jump(self):
         self.y_speed = 20.0 / 60
         self.position += (0,20.0/60,0)

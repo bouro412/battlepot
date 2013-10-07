@@ -241,8 +241,10 @@ def chara_and_floor(chara,floor):
                if chara.before_position[1] >= floor.height and chara.position[1] <= floor.height:
                     chara.position += (0,floor.height - chara.position[1],0)
                     return 1
-               else:
+               elif chara.position[1] > floor.height:
                     return 0
+               else:
+                    return -1
           else:
                if chara.before_position[1] >= floor.height:
                     return 0
@@ -291,8 +293,8 @@ def chara_and_wall_ALL(chara,wall):
                                  before_chara_xzposi - wall_xzbase[0]]
           
           if util.dot(wall_xznormal,point1tochara[0]) * util.dot(wall_xznormal,point1tobeforechara[0]) <= 0 or util.dot(wall_xznormal,point1tochara[1]) * util.dot(wall_xznormal,point1tobeforechara[1]) <= 0:
-               print "wall"
                distance = sqrt((abs(point1tochara[2])) ** 2 - (util.dot(point1to2,point1tochara[2]) / abs(point1to2)) ** 2)
+               print distance
                if util.dot(wall_xznormal,point1tobeforechara[2]) >= 0:
                     if util.dot(wall_xznormal,point1tochara[2]) >= 0:
                          chara.position += 1.1 * (chara.radius - distance) * wall.normal

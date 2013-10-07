@@ -12,6 +12,11 @@ def green():
     shin = 51.2
     colors(green,green,green,shin)
 
+def blue():
+    blue = (0.0,0.0,1.0,1.0)
+    shin = 51.2
+    colors(blue,blue,blue,shin)
+
 def gold():
     amb = (0.247250, 0.1995, 0.07450, 0.0)
     diff = (0.75164, 0.60648, 0.22648, 0.0)

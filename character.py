@@ -17,7 +17,7 @@ import gameobject
 class normalplayer(gameobject.player):
 
     normal_speed = 0.1
-    dash_speed = 0.5
+    dash_speed = 0.3
     v = normal_speed
     w = 5
     cameralock = False
@@ -31,7 +31,7 @@ class normalplayer(gameobject.player):
     friction = 0.03
     air_friction = 0.01
     jumpon = False
-    boost_power = 100.0
+    boost_power = 200.0
     boost_recovery = 75.0 / 180.0
     
     
@@ -60,8 +60,7 @@ class normalplayer(gameobject.player):
                              joyinput,objects)
             return 0           
         self.LT(joyinput)
-        if self.onearth or self.jumpon:
-            self.LeftAxis(joyinput)
+        self.LeftAxis(joyinput)
         self.Ajump(joyinput)
         if self.RTcounter > 0:
             self.RTshotrecharge()
@@ -290,7 +289,7 @@ class normalplayer(gameobject.player):
             self.jumpon = False
         if self.jumpon:
             self.boost_power -= 200.0 / 180
-            if self.y_speed < 20.0 / 60:
+            if self.y_speed < 30.0 / 60:
                 self.y_speed += 2.0 / 60
 
 
@@ -359,9 +358,11 @@ class normalenemy(gameobject.enemy):
 
     def visual(self):
         if self.colornum == 0:
-            color.gold()
+            color.red()
         elif self.colornum == 1:
-            color.ruby()
+            color.blue()
+        elif self.colornum == 2:
+            color.green()
         glutSolidTeapot(1)
 
     def AI_fixed_artillery(self,joy,objects,bullet_type):
@@ -418,7 +419,7 @@ class normalenemy(gameobject.enemy):
     
     def move(self,joy,objects):
         gameobject.enemy.move(self,joy,objects)
-        self.AI_fixed_artillery(joy,objects,self.states[2])
+        self.AI_fixed_artillery(joy,objects,self.colornum)
 
     def shot_player(self,player_angle,bullet_type):
         posi = copy.deepcopy(self.position)
