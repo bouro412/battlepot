@@ -139,15 +139,20 @@ class player(character):
     
   
 class enemy(character):
+    startup = 2000
     def AI(self):
         pass
     def rotate(self,x,y):
         self.vector = [self.vector[0] + x,self.vector[1] + y]
     def move(self,joy,objects):
         character.move(self,joy,objects)
+        if self.startup > 0:
+            self.startup -= 17
+            return 0
         if self.states[1] <= 0:
             self.kill()
-        
+        return 1
+
 
     
 

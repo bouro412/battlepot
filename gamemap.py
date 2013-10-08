@@ -8,8 +8,9 @@ import mapobject
 
 def testmap():
     objects = [character.normalplayer(0, [-20,0,50],[0,0,0],[0,10])
-               ,character.normalenemy(0,[50,0,50],[180,0,0],[1,10])
-               ,character.normalenemy(0,[150,0,150],[0,0,0],[2,10])
+               ,character.normalenemy(0,[10,0,50],[0,0,0],[1,10])
+               ,character.normalenemy(1,[0,0,40],[0,0,0],[2,10])
+               ,character.normalenemy(2,[0,0,60],[0,0,0],[2,10])
                #,mapobject.wall((0,0,0),(200,0,0),100)
                ,mapobject.floor((-50,0,0),150,100)
                ,mapobject.floor((0,10,0),90,10)

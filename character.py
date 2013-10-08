@@ -418,8 +418,8 @@ class normalenemy(gameobject.enemy):
 
     
     def move(self,joy,objects):
-        gameobject.enemy.move(self,joy,objects)
-        self.AI_fixed_artillery(joy,objects,self.colornum)
+        if gameobject.enemy.move(self,joy,objects):
+            self.AI_fixed_artillery(joy,objects,self.colornum)
 
     def shot_player(self,player_angle,bullet_type):
         posi = copy.deepcopy(self.position)
