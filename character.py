@@ -24,6 +24,7 @@ class normalplayer(gameobject.player):
     normal_camera_speed = 2.0
     slow_camera_speed = 0.7
     camera_speed = normal_camera_speed
+    MAXHP = 0
     RTcounter = 0
     recovery = None
     radius = 0.8
@@ -31,8 +32,8 @@ class normalplayer(gameobject.player):
     friction = 0.03
     air_friction = 0.01
     jumpon = False
-    boost_power = 200.0
-    boost_recovery = 75.0 / 180.0
+    boost_power = 100.0
+    boost_recovery = 50.0 / 180.0
     
     
     def visual(self):
@@ -44,6 +45,8 @@ class normalplayer(gameobject.player):
     def move(self,joyinput,objects):
         axis = joyinput.axis
         buttons = joyinput.buttons
+        if self.MAXHP == 0:
+            self.MAXHP = self.states[1]
         gameobject.player.move(self,joyinput,objects)
         if self.boost_power < 100:
             self.boost_power += self.boost_recovery
@@ -145,8 +148,8 @@ class normalplayer(gameobject.player):
         axis = joyinput.axis
         if axis[2] > 0:
             if self.cameralock:
-                if self.boost_power >= 25 and (abs(axis[0]) > 0.5 or abs(axis[1]) > 0.5):
-                    self.boost_power -= 25        
+                if self.boost_power >= 20 and (abs(axis[0]) > 0.5 or abs(axis[1]) > 0.5):
+                    self.boost_power -= 20        
                     self.recovery = [self.LTstep,400,copy.deepcopy(axis)]
             else:
                 self.recovery = [self.LTboost,300,copy.deepcopy(axis)]
@@ -178,7 +181,7 @@ class normalplayer(gameobject.player):
                 self.side_move(-v)
                 self.vector[2] = 10
             else:
-                self.boost_power += 25
+                self.boost_power += 20
                 self.recovery = None
         elif count > 0:
             self.vector[1] = 0
@@ -189,7 +192,7 @@ class normalplayer(gameobject.player):
 
     def LTboost(self,count,axis,joyinput,objects):
         if self.boost_power >= 200.0 /180:
-            self.boost_power -= 200.0 / 180
+            self.boost_power -= 100.0 / 180
         else:
             count = 0
         self.slip -= self.slip 
@@ -238,8 +241,8 @@ class normalplayer(gameobject.player):
             
     def boost_persist(self,count,axis,joyinput,objects):
         axis = joyinput.axis
-        if self.boost_power >= 200.0 / 180:
-            self.boost_power -= 200.0 / 180
+        if self.boost_power >= 100.0 / 180:
+            self.boost_power -= 100.0 / 180
         else:
             axis[2] = 0
 
@@ -283,12 +286,12 @@ class normalplayer(gameobject.player):
         self.Ajump(joyinput)
         
     def Ajump(self,joyinput):
-        if joyinput.buttons[0] == 1 and self.boost_power >= 200.0 / 180:
+        if joyinput.buttons[0] == 1 and self.boost_power >= 150.0 / 180:
             self.jumpon = True
-        elif joyinput.buttons[0] == -1 or self.boost_power < 200.0 / 180:
+        elif joyinput.buttons[0] == -1 or self.boost_power < 150.0 / 180:
             self.jumpon = False
         if self.jumpon:
-            self.boost_power -= 200.0 / 180
+            self.boost_power -= 150.0 / 180
             if self.y_speed < 30.0 / 60:
                 self.y_speed += 2.0 / 60
 

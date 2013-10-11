@@ -64,6 +64,12 @@ def turquoise():
            (0.297254,0.30829, 0.306678,1.0),
            12.8)
 
+def gray():
+    colors((0.8,1,1,1),
+           (0.8,1,1,1),
+           (0.8,1,1,1),
+           51.2)
+
 def colors(amb,diff,spe,shin):
     glColor4fv(amb)
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT)
@@ -72,3 +78,6 @@ def colors(amb,diff,spe,shin):
     glColor4fv(spe)
     glColorMaterial(GL_FRONT_AND_BACK, GL_SPECULAR)
     glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, shin)
+
+def simple_colors(col):
+    colors(col,col,col,51.2)

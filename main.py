@@ -14,12 +14,13 @@ import gamemap
 
 #glut側で使われる関数群をまとめたクラス
 class funcs:
-    def __init__(self,joy,objects):
+    def __init__(self,Map,joy,objects):
+        self.Map = Map
         self.objects = objects
         self.joy = joy
             
     def display(self):
-         gameoutput.step(self.objects,self.joy)
+         gameoutput.step(self.objects,self.joy,self.Map)
 
     def keyboard(self,key, x, y):
         gameinput.keyb(key, x, y,self.joy)
@@ -60,12 +61,13 @@ def inits():
 
 def register_funcs():
     #オブジェクトリストの初期化
-    objects = gamemap.testmap()
+    objects = []
+    Map = gamemap.Map(0)
     #ジョイスティック入力の初期化
     joy = joystick_input.joyinput()
     joy.init()
     #glutの初期化
-    f = funcs(joy,objects) 
+    f = funcs(Map,joy,objects) 
     glutDisplayFunc(f.display)
     glutReshapeFunc(f.reshape)
     glutKeyboardFunc(f.keyboard)

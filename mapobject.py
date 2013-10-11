@@ -33,7 +33,7 @@ class floor(gameobject.gameobject):
                            self.origin + (0,0,self.zlength)
                            ]
 
-            color.yellow_plastic()
+            color.gray()
             glBegin(GL_QUADS)
             glNormal3f(0,1,0)
             for x in coordinates:
@@ -67,7 +67,7 @@ class wall(gameobject.gameobject):
                            ,self.base_point2 + (0,self.height,0)
                            ,self.base_point2)
 
-            color.green()
+            color.simple_colors((0,0.5,0.5,1))
             glBegin(GL_QUADS)
             glNormal3fv(self.normal)
             for x in coordinates:
