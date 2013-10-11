@@ -356,6 +356,7 @@ class normalenemy(gameobject.enemy):
     w = 5
     cameralock = False
     shot_counter = 0
+    shot_counter_limit = [700,700,1000]
     radius = 0.8
     before_player_position = None
 
@@ -379,9 +380,9 @@ class normalenemy(gameobject.enemy):
             if bullet_type == 1:
                 ob = self.shot_player(player_angle,1)
             if bullet_type == 2:
-                ob = self.shot_player(player_angle,2)
-            if bullet_type == 3:
                 ob = self.hensa_shot(objects)
+            if bullet_type == 3:
+                ob = self.shot_player(player_angle,2)
             if ob != 0:
                 objects.append(ob)
 
@@ -464,6 +465,24 @@ class normalenemy(gameobject.enemy):
     
     def shot_recharge(self):
         self.shot_counter += 17
-        if self.shot_counter >= 1000:
+        if self.shot_counter >= self.shot_counter_limit[self.colornum]:
             self.shot_counter = 0
             
+class bullenemy(normalenemy):
+    shot_counter_limit = [200,350,500]
+
+    def visual(self):
+        if self.colornum == 0:
+            color.red()
+        elif self.colornum == 1:
+            color.blue()
+        elif self.colornum == 2:
+            color.green()
+        glPushMatrix()
+        glRotate(30,0,1,0)
+        glutSolidTeapot(1)
+        glPopMatrix()
+        glPushMatrix()
+        glRotate(-30,0,1,0)
+        glutSolidTeapot(1)
+        glPopMatrix()

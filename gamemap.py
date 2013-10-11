@@ -19,10 +19,10 @@ class Map:
     def stage1_move(self,joyinput,objects):    
         if self.start == False:
             print "start"
-            objects[:] = [character.normalplayer(0, [-20,0,50],[0,0,0],[0,25])
-                          ,character.normalenemy(0,[10,0,50],[180,0,0],[1,5])
-                          ,character.normalenemy(1,[0,0,40],[180,0,0],[2,5])
-                          ,character.normalenemy(2,[0,0,60],[180,0,0],[3,5])
+            objects[:] = [character.normalplayer(0, [-40,0,50],[0,0,0],[0,25])
+                          #,character.bullenemy(0,[0,0,60],[180,0,0],[1,5])
+                          ,character.normalenemy(0,[0,0,50],[180,0,0],[2,5])
+                          #,character.normalenemy(0,[0,0,60],[180,0,0],[3,5])
                           ,mapobject.floor((-50,0,0),150,100)
                           ,mapobject.floor((0,10,0),90,10)
                           ,mapobject.floor((0,5,10),90,10)
@@ -44,6 +44,12 @@ class Map:
                           ,mapobject.wall((0,0,80),(0,0,90),5)
                           ,mapobject.wall((0,0,90),(0,0,100),10)
                           ]
+            """,mapobject.wall((-50,0,25),(-20,0,25),10)
+            ,mapobject.wall((-20,0,25),(-20,0,75),10)
+            ,mapobject.wall((-20,0,75),(-50,0,75),10)
+            ,mapobject.floor((-50,10,25),30,50)
+            """
+                          
             
             self.start = True
 
@@ -51,9 +57,11 @@ class Map:
             print "enemy0"
             if self.wave == 0:
                 self.wave += 1
-                obj = [character.normalenemy(0,[50,0,50],[180,0,0],[4,5])
-                       ,character.normalenemy(1,[15,5,10],[180,0,0],[5,5])
-                       ,character.normalenemy(2,[15,5,40],[180,0,0],[6,5])]
+                obj = [character.normalenemy(1,[30,5,18],[180,0,0],[4,5])
+                       ,character.normalenemy(1,[30,5,82],[180,0,0],[5,5])
+                       ,character.normalenemy(2,[60,5,18],[180,0,0],[6,5])
+                       ,character.normalenemy(2,[60,5,82],[180,0,0],[7,5])]
+                
                 objects.extend(obj)
                 """obj = character.normalenemy(0,[50,0,50],[180,0,0],[4,5])
                 objects.append(obj)"""

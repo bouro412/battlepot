@@ -54,7 +54,7 @@ class character(gameobject):
             self.position += (0,self.fallspeed_limit,0)
         self.gravity()
         if not self.before_onearth and self.onearth and self.recovery == None:
-            self.recovery = [self.landing,100,1]
+            self.recovery = [self.landing,200,1]
         self.before_onearth = self.onearth
         
     def draw(self):

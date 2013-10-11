@@ -60,7 +60,7 @@ class Bullet(gameobject.gameobject):
             self.timelimit > 0
 
 class guided_bullet(Bullet):
-    speed = 1.0
+    speed = 1.5
     timelimit = 3000
     w = 1.5
     def to_player_angles(self,player):
