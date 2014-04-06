@@ -23,10 +23,13 @@ class Bullet(gameobject.gameobject):
         #statesは[ID,damage]のリスト
     
     def visual(self):
-        color.green()
+        glPushMatrix()
+        color.shining_green()
         glRotate(90 + self.vector[0],0,1,0)
         glRotate(-self.vector[1],1,0,0)
         glutSolidCone(0.2,1,10,10)
+        glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,(0,0,0,1))
+        glPopMatrix()
 
     def move(self,joy,objects):
         self.before_position = self.position
@@ -60,9 +63,18 @@ class Bullet(gameobject.gameobject):
             self.timelimit > 0
 
 class guided_bullet(Bullet):
-    speed = 1.5
+    speed = 1.3
     timelimit = 3000
-    w = 1.5
+    w = 1.0
+    def visual(self):
+        glPushMatrix()
+        color.shining_blue()
+        glRotate(90 + self.vector[0],0,1,0)
+        glRotate(-self.vector[1],1,0,0)
+        glutSolidCone(0.2,1,10,10)
+        glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,(0,0,0,1))
+        glPopMatrix()
+        
     def to_player_angles(self,player):
         vector = player.position - self.position
         vector = vector / abs(vector)
@@ -101,3 +113,5 @@ class guided_bullet(Bullet):
 
 class fast_bullet(Bullet):
     speed = Bullet.speed * 2
+class slow_bullet(Bullet):
+    speed = Bullet.speed * 0.75

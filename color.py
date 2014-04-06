@@ -12,10 +12,18 @@ def green():
     shin = 51.2
     colors(green,green,green,shin)
 
+def shining_green():
+    glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,(0,1,0,1))
+
+
 def blue():
     blue = (0.0,0.0,1.0,1.0)
     shin = 51.2
     colors(blue,blue,blue,shin)
+
+def shining_blue():
+    glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,(0,0,1,1))
+
 
 def gold():
     amb = (0.247250, 0.1995, 0.07450, 0.0)
@@ -68,7 +76,7 @@ def gray():
     colors((0.8,1,1,1),
            (0.8,1,1,1),
            (0.8,1,1,1),
-           51.2)
+           40.2)
 
 def colors(amb,diff,spe,shin):
     glColor4fv(amb)

@@ -28,6 +28,7 @@ def step(objects,joy,Map):
      glEnable(GL_COLOR_MATERIAL)
      
      light()  
+
      #ジョイスティックの読み取り
      joy.input()
  
@@ -74,16 +75,29 @@ def light():
     lightamb = [0,0,0,1]
     lightdiff = [1,1,1,1]
     lightspe = [1,1,1,1]
-    lightpos = [1,1,2,0.02]
+    lightpos = [-10,80,-40,1]
+    lightpos2 = [70,80,40,1]
+    lightpos3 = [-10,80,40,1]
+    lightspodir = (0,-1,0)
 
     glLightfv(GL_LIGHT0, GL_AMBIENT, lightamb)
     glLightfv(GL_LIGHT0, GL_DIFFUSE, lightdiff)
     glLightfv(GL_LIGHT0, GL_SPECULAR, lightspe)
+    glLightfv(GL_LIGHT0,GL_LINEAR_ATTENUATION,0.01)
+    #glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, lightspodir)
+    glLightfv(GL_LIGHT1, GL_AMBIENT, lightamb)
+    glLightfv(GL_LIGHT1, GL_DIFFUSE, lightdiff)
+    glLightfv(GL_LIGHT1, GL_SPECULAR, lightspe)
+    glLightfv(GL_LIGHT1,GL_LINEAR_ATTENUATION,0.01)
+    #glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, lightspodir)
+    
 
     glEnable(GL_LIGHT0)
+    glEnable(GL_LIGHT1)
     glEnable(GL_LIGHTING)
 
     glLightfv(GL_LIGHT0, GL_POSITION, lightpos)
+    glLightfv(GL_LIGHT1, GL_POSITION, lightpos2)
 
 def draw2D(objects):
      glMatrixMode(GL_PROJECTION)
@@ -136,11 +150,11 @@ def draw2D(objects):
      glEnd()
 
      glBegin(GL_LINES)
-     glColor(1,1,1,1)
-     glVertex2f(320,230)
-     glVertex2f(320,240)
-     glVertex2f(315,235)
-     glVertex2f(325,235)
+     glColor(0,1,0,1)
+     glVertex2f(320,225)
+     glVertex2f(320,245)
+     glVertex2f(310,235)
+     glVertex2f(330,235)
      glEnd()
 
      #元に戻す（3D用へ戻る）

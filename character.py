@@ -279,6 +279,7 @@ class normalplayer(gameobject.player):
     def boostoff(self,count,vector,joyinput,objects):
         if count == 300 - 17:
             self.slip = vector
+            self.jumpon = False
         elif count <= 0:
             self.recovery = None
         else:
@@ -356,7 +357,7 @@ class normalenemy(gameobject.enemy):
     w = 5
     cameralock = False
     shot_counter = 0
-    shot_counter_limit = [700,700,1000]
+    shot_counter_limit = [600,700,800]
     radius = 0.8
     before_player_position = None
 
@@ -434,7 +435,7 @@ class normalenemy(gameobject.enemy):
                  ,1.5 * -sin(radians(self.vector[0])))
             
         if bullet_type == 0:
-            result = bullet.Bullet(posi,vec,[self.states[0],1])
+            result = bullet.slow_bullet(posi,vec,[self.states[0],1])
         elif bullet_type == 1:
             result = bullet.guided_bullet(posi, vec,[self.states[0],1])
         elif bullet_type == 2:
@@ -450,7 +451,7 @@ class normalenemy(gameobject.enemy):
             return 0
         else:
             player_move = player.position - self.before_player_position
-            bullet_speed = 3.0
+            bullet_speed = 3.0 * 0.75
             player_speed = abs(player_move)
             to_player = player.position - self.position
             
@@ -469,7 +470,7 @@ class normalenemy(gameobject.enemy):
             self.shot_counter = 0
             
 class bullenemy(normalenemy):
-    shot_counter_limit = [200,350,500]
+    shot_counter_limit = [200,350,400]
 
     def visual(self):
         if self.colornum == 0:
